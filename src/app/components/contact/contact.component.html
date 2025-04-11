@@ -1,0 +1,91 @@
+<section class="contact-page">
+  <div class="contact-header">
+    <h1>Get in Touch</h1>
+    <p>Feel free to reach out for collaborations or just a friendly hello</p>
+  </div>
+
+  <div class="contact-content">
+    <div class="contact-info">
+      <h2>Professional Profiles</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <i class="fab fa-github"></i>
+          <div class="info-details">
+            <h3>GitHub</h3>
+            <a href="https://{{ contactInfo.github }}" target="_blank">{{ contactInfo.github }}</a>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fab fa-linkedin"></i>
+          <div class="info-details">
+            <h3>LinkedIn</h3>
+            <a href="https://{{ contactInfo.linkedin }}" target="_blank">{{ contactInfo.linkedin }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact form temporarily disabled
+    <div class="contact-form">
+      <h2>Send Message</h2>
+      <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            formControlName="name"
+            [ngClass]="{ 'invalid': submitted && f['name'].errors }"
+          >
+          <div class="error-message" *ngIf="submitted && f['name'].errors">
+            Name is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email"
+            [ngClass]="{ 'invalid': submitted && f['email'].errors }"
+          >
+          <div class="error-message" *ngIf="submitted && f['email'].errors">
+            <span *ngIf="f['email'].errors['required']">Email is required</span>
+            <span *ngIf="f['email'].errors['email']">Please enter a valid email</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input 
+            type="text" 
+            id="subject" 
+            formControlName="subject"
+            [ngClass]="{ 'invalid': submitted && f['subject'].errors }"
+          >
+          <div class="error-message" *ngIf="submitted && f['subject'].errors">
+            Subject is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea 
+            id="message" 
+            formControlName="message"
+            rows="5"
+            [ngClass]="{ 'invalid': submitted && f['message'].errors }"
+          ></textarea>
+          <div class="error-message" *ngIf="submitted && f['message'].errors">
+            <span *ngIf="f['message'].errors['required']">Message is required</span>
+            <span *ngIf="f['message'].errors['minlength']">Message must be at least 10 characters</span>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Send Message</button>
+      </form>
+    </div>
+    -->
+  </div>
+</section>

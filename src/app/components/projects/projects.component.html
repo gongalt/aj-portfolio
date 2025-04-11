@@ -1,0 +1,19 @@
+<section class="projects">
+  <h2>Recent Projects</h2>
+  <div class="project-grid">
+    <div class="project-card" *ngFor="let project of projects">
+      <div class="project-header">
+        <h3>{{ project.company }}</h3>
+        <span class="period">{{ project.period }}</span>
+      </div>
+      <div class="role">{{ project.role }}</div>
+      <p class="description">{{ project.description }}</p>
+      <div class="technologies">
+        <span class="tech" *ngFor="let tech of project.technologies">
+          {{ tech }}
+        </span>
+      </div>
+      <a [href]="project.link" target="_blank" class="project-link">Visit Website</a>
+    </div>
+  </div>
+</section>

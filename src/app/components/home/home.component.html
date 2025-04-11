@@ -1,0 +1,64 @@
+<section class="hero">
+  <div class="hero-content">
+    <h1>Senior Angular Developer</h1>
+    <p class="summary">{{ summary }}</p>
+    <div class="hero-cta">
+      <a routerLink="/contact" class="contact-btn">Contact Me</a>
+    </div>
+  </div>
+</section>
+
+<section class="skills">
+  <h2>Technical Expertise</h2>
+  <div class="skill-grid">
+    <div class="skill-card" *ngFor="let skill of skills">
+      <div class="skill-header">
+        <span class="skill-name">{{ skill.name }}</span>
+        <span class="skill-years">{{ skill.years }} years</span>
+      </div>
+      <div class="skill-progress">
+        <div class="progress-bar" [style.width.%]="skill.level">
+          <span class="progress-label">{{ skill.level }}%</span>
+        </div>
+      </div>
+      <div class="skill-projects">
+        {{ skill.projects }}+ projects completed
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <h2>What People Say</h2>
+  <div class="testimonial-grid">
+    <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+      <blockquote>{{ testimonial.quote }}</blockquote>
+      <footer>
+        <cite>{{ testimonial.name }}</cite>
+        <span class="project">{{ testimonial.project }}</span>
+      </footer>
+    </div>
+  </div>
+</section>
+
+<section class="github-stats">
+  <h2>GitHub Activity</h2>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-value">{{ githubStats.repos }}</span>
+      <span class="stat-label">Repositories</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ githubStats.contributions }}</span>
+      <span class="stat-label">Contributions</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ githubStats.stars }}</span>
+      <span class="stat-label">Stars</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ githubStats.followers }}</span>
+      <span class="stat-label">Followers</span>
+    </div>
+  </div>
+</section>
