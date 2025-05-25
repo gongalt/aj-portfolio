@@ -1,25 +1,26 @@
 <section class="hero">
   <div class="hero-content">
-    <h1>Senior Angular Developer</h1>
+    <p class="intro-text">Hi, my name is</p>
+    <h1>Adrian Jenson.</h1>
+    <h2 class="subtitle">I build things for the web.</h2>
     <p class="summary">{{ summary }}</p>
     <div class="hero-cta">
-      <a routerLink="/contact" class="contact-btn">Contact Me</a>
+      <a routerLink="/contact" class="contact-btn">Get In Touch</a>
+      <button (click)="downloadResume()" class="resume-btn">Download Resume</button>
     </div>
   </div>
 </section>
 
 <section class="skills">
-  <h2>Technical Expertise</h2>
+  <h2>Where I've Worked</h2>
   <div class="skill-grid">
     <div class="skill-card" *ngFor="let skill of skills">
       <div class="skill-header">
         <span class="skill-name">{{ skill.name }}</span>
-        <span class="skill-years">{{ skill.years }} years</span>
+        <span class="skill-years">{{ skill.years }}+ years</span>
       </div>
       <div class="skill-progress">
-        <div class="progress-bar" [style.width.%]="skill.level">
-          <span class="progress-label">{{ skill.level }}%</span>
-        </div>
+        <div class="progress-bar" [style.width.%]="skill.level"></div>
       </div>
       <div class="skill-projects">
         {{ skill.projects }}+ projects completed
