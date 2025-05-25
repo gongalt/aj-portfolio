@@ -46,20 +46,36 @@
   <h2>GitHub Activity</h2>
   <div class="stats-grid">
     <div class="stat-card">
-      <span class="stat-value">{{ githubStats.repos }}</span>
+      <span class="stat-value" [class.loading]="isLoadingGitHubStats">
+        {{ isLoadingGitHubStats ? '...' : githubStats.repos }}
+      </span>
       <span class="stat-label">Repositories</span>
     </div>
     <div class="stat-card">
-      <span class="stat-value">{{ githubStats.contributions }}</span>
+      <span class="stat-value" [class.loading]="isLoadingGitHubStats">
+        {{ isLoadingGitHubStats ? '...' : githubStats.contributions }}
+      </span>
       <span class="stat-label">Contributions</span>
     </div>
     <div class="stat-card">
-      <span class="stat-value">{{ githubStats.stars }}</span>
+      <span class="stat-value" [class.loading]="isLoadingGitHubStats">
+        {{ isLoadingGitHubStats ? '...' : githubStats.stars }}
+      </span>
       <span class="stat-label">Stars</span>
     </div>
     <div class="stat-card">
-      <span class="stat-value">{{ githubStats.followers }}</span>
+      <span class="stat-value" [class.loading]="isLoadingGitHubStats">
+        {{ isLoadingGitHubStats ? '...' : githubStats.followers }}
+      </span>
       <span class="stat-label">Followers</span>
     </div>
+  </div>
+
+
+
+  <div class="github-link">
+    <a href="https://github.com/gongalt" target="_blank" class="view-github-btn">
+      View Full GitHub Profile
+    </a>
   </div>
 </section>

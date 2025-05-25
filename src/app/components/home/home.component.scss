@@ -1,4 +1,4 @@
-// Minimalist color scheme inspired by best practices
+// Optimized color scheme with consolidated variables
 :host {
   --navy: #0a192f;
   --light-navy: #112240;
@@ -7,8 +7,52 @@
   --lightest-slate: #ccd6f6;
   --green: #64ffda;
   --white: #e6f1ff;
-  --background: #0a192f;
   --card-bg: #112240;
+  --section-padding: clamp(2rem, 5vw, 4rem) 2rem;
+  --border-radius: 4px;
+  --transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+// Common section styles
+%section-base {
+  padding: var(--section-padding);
+
+  h2 {
+    color: var(--lightest-slate);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin-bottom: 3rem;
+    position: relative;
+    text-align: center;
+
+    &::after {
+      content: "";
+      display: inline-block;
+      width: clamp(100px, 20vw, 200px);
+      height: 1px;
+      background: var(--light-navy);
+      margin-left: 1rem;
+      vertical-align: middle;
+    }
+  }
+}
+
+%card-base {
+  background: var(--card-bg);
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--light-navy);
+  transition: transform 0.25s;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+%grid-base {
+  display: grid;
+  gap: clamp(1rem, 3vw, 2rem);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .hero {
@@ -68,8 +112,8 @@
         text-decoration: none;
         font-size: clamp(0.9rem, 2vw, 1.1rem);
         font-family: 'Courier New', monospace;
-        transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-        border-radius: 4px;
+        transition: var(--transition);
+        border-radius: var(--border-radius);
         cursor: pointer;
 
         &:hover {
@@ -84,8 +128,6 @@
         color: var(--navy);
 
         &:hover {
-          background: var(--green);
-          color: var(--navy);
           box-shadow: 4px 4px 0 var(--lightest-slate);
         }
       }
@@ -94,53 +136,24 @@
 }
 
 .skills {
-  padding: clamp(2rem, 5vw, 4rem) 2rem;
+  @extend %section-base;
   background: var(--navy);
 
-  h2 {
-    color: var(--lightest-slate);
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    margin-bottom: 3rem;
-    position: relative;
-    text-align: center;
-
-    &::before {
-      content: "02.";
-      color: var(--green);
-      font-family: 'Courier New', monospace;
-      font-size: clamp(1rem, 2.5vw, 1.2rem);
-      margin-right: 0.5rem;
-    }
-
-    &::after {
-      content: "";
-      display: inline-block;
-      width: clamp(100px, 20vw, 200px);
-      height: 1px;
-      background: var(--light-navy);
-      margin-left: 1rem;
-      vertical-align: middle;
-    }
+  h2::before {
+    content: "02.";
+    color: var(--green);
+    font-family: 'Courier New', monospace;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    margin-right: 0.5rem;
   }
 
   .skill-grid {
-    display: grid;
+    @extend %grid-base;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: clamp(1rem, 3vw, 2rem);
-    max-width: 1200px;
-    margin: 0 auto;
   }
 
   .skill-card {
-    background: var(--card-bg);
-    padding: clamp(1.5rem, 3vw, 2rem);
-    border-radius: 4px;
-    border: 1px solid var(--light-navy);
-    transition: transform 0.25s;
-
-    &:hover {
-      transform: translateY(-5px);
-    }
+    @extend %card-base;
 
     .skill-header {
       display: flex;
@@ -185,16 +198,10 @@
 }
 
 .testimonials {
-  padding: clamp(2rem, 5vw, 4rem) 2rem;
+  @extend %section-base;
   background: var(--light-navy);
 
   h2 {
-    color: var(--lightest-slate);
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    margin-bottom: 3rem;
-    position: relative;
-    text-align: center;
-
     &::before {
       content: "03.";
       color: var(--green);
@@ -204,29 +211,17 @@
     }
 
     &::after {
-      content: "";
-      display: inline-block;
-      width: clamp(100px, 20vw, 200px);
-      height: 1px;
       background: var(--navy);
-      margin-left: 1rem;
-      vertical-align: middle;
     }
   }
 
   .testimonial-grid {
-    display: grid;
+    @extend %grid-base;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: clamp(1rem, 3vw, 2rem);
-    max-width: 1200px;
-    margin: 0 auto;
   }
 
   .testimonial-card {
-    background: var(--card-bg);
-    padding: clamp(1.5rem, 3vw, 2rem);
-    border-radius: 4px;
-    border: 1px solid var(--light-navy);
+    @extend %card-base;
 
     blockquote {
       font-style: italic;
@@ -263,54 +258,27 @@
 }
 
 .github-stats {
-  padding: clamp(2rem, 5vw, 4rem) 2rem;
+  @extend %section-base;
   background: var(--navy);
 
-  h2 {
-    color: var(--lightest-slate);
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    margin-bottom: 3rem;
-    position: relative;
-    text-align: center;
-
-    &::before {
-      content: "04.";
-      color: var(--green);
-      font-family: 'Courier New', monospace;
-      font-size: clamp(1rem, 2.5vw, 1.2rem);
-      margin-right: 0.5rem;
-    }
-
-    &::after {
-      content: "";
-      display: inline-block;
-      width: clamp(100px, 20vw, 200px);
-      height: 1px;
-      background: var(--light-navy);
-      margin-left: 1rem;
-      vertical-align: middle;
-    }
+  h2::before {
+    content: "04.";
+    color: var(--green);
+    font-family: 'Courier New', monospace;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    margin-right: 0.5rem;
   }
 
   .stats-grid {
-    display: grid;
+    @extend %grid-base;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: clamp(1rem, 3vw, 2rem);
     max-width: 1000px;
-    margin: 0 auto;
+    margin-bottom: 3rem;
   }
 
   .stat-card {
-    background: var(--card-bg);
-    padding: clamp(1.5rem, 3vw, 2rem);
-    border-radius: 4px;
-    border: 1px solid var(--light-navy);
+    @extend %card-base;
     text-align: center;
-    transition: transform 0.25s;
-
-    &:hover {
-      transform: translateY(-5px);
-    }
 
     .stat-value {
       display: block;
@@ -319,6 +287,11 @@
       color: var(--green);
       margin-bottom: 0.5rem;
       font-family: 'Courier New', monospace;
+
+      &.loading {
+        opacity: 0.6;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
     }
 
     .stat-label {
@@ -326,23 +299,47 @@
       font-size: clamp(0.9rem, 2vw, 1rem);
     }
   }
+
+
+
+  .github-link {
+    text-align: center;
+    margin-top: 3rem;
+
+    .view-github-btn {
+      display: inline-block;
+      padding: 1rem 2rem;
+      border: 1px solid var(--green);
+      background: transparent;
+      color: var(--green);
+      text-decoration: none;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      font-family: 'Courier New', monospace;
+      border-radius: 4px;
+      transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+      &:hover {
+        background: rgba(100, 255, 218, 0.1);
+        transform: translate(-4px, -4px);
+        box-shadow: 4px 4px 0 var(--green);
+      }
+    }
+  }
 }
 
-// Enhanced mobile responsiveness
+// Consolidated mobile styles
 @media (max-width: 768px) {
   .hero {
     padding: 1rem;
     text-align: center;
 
-    .hero-content {
-      .hero-cta {
-        justify-content: center;
+    .hero-content .hero-cta {
+      justify-content: center;
 
-        .contact-btn, .resume-btn {
-          flex: 1;
-          min-width: 140px;
-          text-align: center;
-        }
+      .contact-btn, .resume-btn {
+        flex: 1;
+        min-width: 140px;
+        text-align: center;
       }
     }
   }
@@ -352,10 +349,7 @@
 
     h2 {
       text-align: left;
-
-      &::after {
-        display: none;
-      }
+      &::after { display: none; }
     }
   }
 
@@ -371,27 +365,17 @@
 }
 
 @media (max-width: 480px) {
-  .hero {
-    .hero-content {
-      .hero-cta {
-        flex-direction: column;
-        align-items: center;
+  .hero .hero-content .hero-cta {
+    flex-direction: column;
+    align-items: center;
 
-        .contact-btn, .resume-btn {
-          width: 100%;
-          max-width: 280px;
-        }
-      }
+    .contact-btn, .resume-btn {
+      width: 100%;
+      max-width: 280px;
     }
   }
 
-  .skill-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .testimonial-grid {
-    grid-template-columns: 1fr;
+  .skill-grid, .testimonial-grid {
     gap: 1rem;
   }
 
@@ -404,5 +388,14 @@
 @media (max-width: 360px) {
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
   }
 }

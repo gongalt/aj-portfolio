@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { GitHubService, GitHubStats } from '../../services/github.service';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +10,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   title = 'Senior Full Stack Developer';
   summary = `A passionate Full Stack Developer seeking to leverage extensive experience in web and mobile development, team leadership, and cutting-edge technologies to create impactful software solutions and contribute to innovative projects.`;
 
@@ -62,12 +63,35 @@ export class HomeComponent {
     }
   ];
 
-  githubStats = {
-    repos: 25,
-    contributions: 500,
-    stars: 15,
-    followers: 8
+  githubStats: GitHubStats = {
+    repos: 19,
+    contributions: 475,
+    stars: 0,
+    followers: 1
   };
+
+  isLoadingGitHubStats = true;
+
+  constructor(private githubService: GitHubService) {}
+
+  ngOnInit() {
+    this.loadGitHubStats();
+  }
+
+  loadGitHubStats() {
+    this.isLoadingGitHubStats = true;
+    this.githubService.getGitHubStats().subscribe({
+      next: (stats) => {
+        this.githubStats = stats;
+        this.isLoadingGitHubStats = false;
+      },
+      error: (error) => {
+        console.error('Failed to load GitHub stats:', error);
+        this.isLoadingGitHubStats = false;
+        // Keep the default fallback values
+      }
+    });
+  }
 
   downloadResume() {
     window.open(this.resumeUrl, '_blank');
