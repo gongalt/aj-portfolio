@@ -7,57 +7,70 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <section class="projects-container">
-      <h1>Some Things I've Built</h1>
+      <div class="container">
+        <h2 class="numbered-heading">
+          <span class="number">04.</span>
+          <span class="title">Some Things I've Built</span>
+          <span class="line"></span>
+        </h2>
 
-      <div class="featured-projects">
-        <div class="project-card featured" *ngFor="let project of featuredProjects; let i = index">
-          <div class="project-content" [class.reverse]="i % 2 !== 0">
-            <div class="project-info">
-              <p class="project-overline">Featured Project</p>
-              <h3 class="project-title">{{ project.company }}</h3>
-              <div class="project-description">
-                <p>{{ project.description }}</p>
+        <!-- Featured Projects -->
+        <div class="featured-projects">
+          <div class="project-card featured" *ngFor="let project of featuredProjects; let i = index">
+            <div class="project-content" [class.reverse]="i % 2 !== 0">
+              <div class="project-info">
+                <p class="project-overline">Featured Project</p>
+                <h3 class="project-title">{{ project.title }}</h3>
+                <div class="project-description">
+                  <p>{{ project.description }}</p>
+                </div>
+                <ul class="project-tech-list">
+                  <li *ngFor="let tech of project.technologies">{{ tech }}</li>
+                </ul>
+                <div class="project-links">
+                  <a [href]="project.link" target="_blank" class="external-link" title="External Link">
+                    <i class="link-icon">🔗</i>
+                  </a>
+                </div>
               </div>
-              <div class="project-tech-list">
-                <span *ngFor="let tech of project.technologies">{{ tech }}</span>
-              </div>
-              <div class="project-links">
-                <a [href]="project.link" target="_blank" class="external-link">
-                  Visit Site
+              <div class="project-image">
+                <a [href]="project.link" target="_blank">
+                  <div class="image-placeholder">
+                    <span>{{ project.title.charAt(0) }}</span>
+                  </div>
+                  <div class="image-overlay"></div>
                 </a>
-              </div>
-            </div>
-            <div class="project-image">
-              <div class="project-placeholder">
-                <span>{{ project.company.charAt(0) }}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="other-projects">
-        <h2>Other Noteworthy Projects</h2>
-        <div class="projects-grid">
-          <div class="project-card" *ngFor="let project of otherProjects">
-            <div class="project-inner">
-              <header>
-                <div class="project-top">
-                  <span class="folder-icon">📁</span>
-                  <div class="project-links">
-                    <a [href]="project.link" target="_blank">🔗</a>
+        <!-- Other Projects -->
+        <div class="other-projects">
+          <h3 class="section-title">Other Noteworthy Projects</h3>
+          <div class="projects-grid">
+            <div class="project-card small" *ngFor="let project of otherProjects">
+              <div class="project-inner">
+                <header>
+                  <div class="project-top">
+                    <div class="folder-icon">📁</div>
+                    <div class="project-links">
+                      <a [href]="project.link" target="_blank" title="External Link">
+                        <i class="link-icon">🔗</i>
+                      </a>
+                    </div>
                   </div>
-                </div>
-                <h3 class="project-title">{{ project.company }}</h3>
-                <div class="project-description">
-                  <p>{{ project.description }}</p>
-                </div>
-              </header>
-              <footer>
-                <div class="project-tech-list">
-                  <span *ngFor="let tech of project.technologies.slice(0, 4)">{{ tech }}</span>
-                </div>
-              </footer>
+                  <h3 class="project-title">{{ project.title }}</h3>
+                  <div class="project-description">
+                    <p>{{ project.description }}</p>
+                  </div>
+                </header>
+                <footer>
+                  <ul class="project-tech-list">
+                    <li *ngFor="let tech of project.technologies">{{ tech }}</li>
+                  </ul>
+                </footer>
+              </div>
             </div>
           </div>
         </div>
@@ -65,182 +78,232 @@ import { CommonModule } from '@angular/common';
     </section>
   `,
   styles: [`
+    :host {
+      --navy: #0a192f;
+      --light-navy: #112240;
+      --green: #64ffda;
+      --slate: #8892b0;
+      --light-slate: #a8b2d1;
+      --lightest-slate: #ccd6f6;
+      --white: #e6f1ff;
+    }
+
     .projects-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 4rem 2rem;
-      background: #0a192f;
-      color: #e6f1ff;
+      background: var(--navy);
+      color: var(--white);
+      padding: 100px 0;
       min-height: 100vh;
     }
 
-    h1 {
-      color: #ccd6f6;
-      font-size: 2.5rem;
-      margin-bottom: 4rem;
-      position: relative;
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
 
-      &::before {
-        content: "02.";
-        color: #64ffda;
+    .numbered-heading {
+      display: flex;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--lightest-slate);
+      margin-bottom: 4rem;
+
+      .number {
+        color: var(--green);
         font-family: 'Courier New', monospace;
-        font-size: 1.2rem;
+        font-size: 1.25rem;
         margin-right: 0.5rem;
       }
 
-      &::after {
-        content: "";
-        display: inline-block;
-        width: 200px;
+      .title {
+        white-space: nowrap;
+      }
+
+      .line {
+        flex-grow: 1;
         height: 1px;
-        background: #112240;
+        background: #303c55;
         margin-left: 1rem;
-        vertical-align: middle;
       }
     }
 
     .featured-projects {
       margin-bottom: 6rem;
+    }
 
-      .project-card.featured {
+    .project-card.featured {
+      position: relative;
+      margin-bottom: 6rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .project-content {
         position: relative;
-        margin-bottom: 6rem;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 2rem;
+        align-items: center;
 
-        .project-content {
-          position: relative;
-          display: grid;
-          grid-template-columns: repeat(12, 1fr);
-          gap: 1rem;
-          align-items: center;
-
-          &.reverse {
-            .project-info { grid-column: 7 / -1; text-align: right; }
-            .project-image { grid-column: 1 / 8; }
-            .project-tech-list { justify-content: flex-end; }
-            .project-links { justify-content: flex-end; }
-          }
-
+        &.reverse {
           .project-info {
-            grid-column: 1 / 7;
-            position: relative;
-            z-index: 2;
-
-            .project-overline {
-              color: #64ffda;
-              font-family: 'Courier New', monospace;
-              font-size: 0.9rem;
-              margin-bottom: 0.5rem;
-            }
-
-            .project-title {
-              color: #ccd6f6;
-              font-size: 1.8rem;
-              margin-bottom: 1rem;
-            }
-
-            .project-description {
-              position: relative;
-              z-index: 2;
-              padding: 1.5rem;
-              background: #112240;
-              border-radius: 4px;
-              box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.7);
-              margin-bottom: 1rem;
-
-              p {
-                color: #8892b0;
-                line-height: 1.6;
-                margin: 0;
-              }
-            }
-
-            .project-tech-list {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 1rem;
-              margin-bottom: 1rem;
-              list-style: none;
-
-              span {
-                color: #8892b0;
-                font-family: 'Courier New', monospace;
-                font-size: 0.9rem;
-              }
-            }
-
-            .project-links {
-              display: flex;
-              gap: 1rem;
-
-              a {
-                color: #ccd6f6;
-                text-decoration: none;
-                padding: 0.5rem 1rem;
-                border: 1px solid #64ffda;
-                border-radius: 4px;
-                font-size: 0.9rem;
-                transition: all 0.25s;
-
-                &:hover {
-                  background: rgba(100, 255, 218, 0.1);
-                  color: #64ffda;
-                }
-              }
-            }
+            grid-column: 7 / -1;
+            text-align: right;
           }
 
           .project-image {
-            grid-column: 6 / -1;
-            position: relative;
-            z-index: 1;
+            grid-column: 1 / 8;
+          }
 
-            .project-placeholder {
-              width: 100%;
-              height: 300px;
-              background: linear-gradient(135deg, #112240, #233554);
-              border-radius: 4px;
-              display: none;
-              align-items: center;
-              justify-content: center;
-              border: 1px solid #233554;
+          .project-tech-list {
+            justify-content: flex-end;
+          }
 
-              span {
-                font-size: 4rem;
-                color: #64ffda;
-                font-weight: bold;
-              }
+          .project-links {
+            justify-content: flex-end;
+          }
+        }
+      }
+
+      .project-info {
+        grid-column: 1 / 7;
+        position: relative;
+        z-index: 2;
+
+        .project-overline {
+          color: var(--green);
+          font-family: 'Courier New', monospace;
+          font-size: 0.9rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .project-title {
+          color: var(--lightest-slate);
+          font-size: 1.75rem;
+          font-weight: 600;
+          margin-bottom: 1.5rem;
+          transition: color 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+          &:hover {
+            color: var(--green);
+          }
+        }
+
+        .project-description {
+          position: relative;
+          z-index: 2;
+          padding: 1.5rem;
+          background: var(--light-navy);
+          border-radius: 4px;
+          box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
+          margin-bottom: 1.5rem;
+
+          p {
+            color: var(--light-slate);
+            margin: 0;
+            line-height: 1.6;
+          }
+        }
+
+        .project-tech-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          margin: 1.5rem 0;
+          padding: 0;
+          list-style: none;
+
+          li {
+            color: var(--light-slate);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+          }
+        }
+
+        .project-links {
+          display: flex;
+          gap: 1rem;
+
+          .external-link {
+            color: var(--light-slate);
+            transition: color 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+            &:hover {
+              color: var(--green);
+            }
+
+            .link-icon {
+              font-size: 1.2rem;
             }
           }
+        }
+      }
+
+      .project-image {
+        grid-column: 6 / -1;
+        position: relative;
+        z-index: 1;
+
+        a {
+          position: relative;
+          display: block;
+        }
+
+        .image-placeholder {
+          width: 100%;
+          height: 300px;
+          background: linear-gradient(135deg, var(--light-navy), #233554);
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid #233554;
+          transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+          span {
+            font-size: 3rem;
+            color: var(--green);
+            font-weight: bold;
+          }
+        }
+
+        .image-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(100, 255, 218, 0.2);
+          border-radius: 4px;
+          transition: opacity 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        &:hover .image-overlay {
+          opacity: 0;
         }
       }
     }
 
     .other-projects {
-      h2 {
-        color: #ccd6f6;
+      .section-title {
         text-align: center;
-        margin-bottom: 3rem;
+        color: var(--lightest-slate);
         font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 3rem;
       }
 
       .projects-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 2rem;
-        align-items: start;
-        justify-content: center;
-        max-width: 1200px;
-        margin: 0 auto;
       }
 
-      .project-card {
+      .project-card.small {
         position: relative;
-        height: auto;
-        min-height: 320px;
-        transition: transform 0.25s;
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
+        transition: transform 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
 
         &:hover {
           transform: translateY(-7px);
@@ -253,73 +316,76 @@ import { CommonModule } from '@angular/common';
           height: 100%;
           min-height: 320px;
           padding: 2rem 1.75rem;
-          background: #112240;
+          background: var(--light-navy);
           border-radius: 4px;
-          border: 1px solid #233554;
-          transition: all 0.25s;
-          box-sizing: border-box;
+          transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
 
           &:hover {
-            border-color: #64ffda;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -15px rgba(2, 12, 27, 0.7);
           }
 
           header {
             flex-grow: 1;
-            
+
             .project-top {
               display: flex;
               justify-content: space-between;
               align-items: center;
-              margin-bottom: 1.5rem;
+              margin-bottom: 2rem;
 
               .folder-icon {
                 font-size: 2rem;
+                color: var(--green);
               }
 
-              .project-links a {
-                color: #ccd6f6;
-                text-decoration: none;
-                font-size: 1.2rem;
-                transition: color 0.25s;
+              .project-links {
+                .link-icon {
+                  color: var(--light-slate);
+                  font-size: 1.2rem;
+                  transition: color 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
 
-                &:hover {
-                  color: #64ffda;
+                  &:hover {
+                    color: var(--green);
+                  }
                 }
               }
             }
 
             .project-title {
-              color: #ccd6f6;
+              color: var(--lightest-slate);
               font-size: 1.3rem;
+              font-weight: 600;
               margin-bottom: 1rem;
-              line-height: 1.3;
+              transition: color 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+              &:hover {
+                color: var(--green);
+              }
             }
 
             .project-description {
-              margin-bottom: 1.5rem;
-              
               p {
-                color: #8892b0;
+                color: var(--light-slate);
                 line-height: 1.6;
                 margin: 0;
-                font-size: 0.95rem;
               }
             }
           }
 
           footer {
-            margin-top: auto;
-            
             .project-tech-list {
               display: flex;
               flex-wrap: wrap;
               gap: 0.75rem;
+              padding: 0;
+              margin: 0;
+              list-style: none;
 
-              span {
-                color: #8892b0;
+              li {
+                color: var(--light-slate);
                 font-family: 'Courier New', monospace;
                 font-size: 0.8rem;
-                white-space: nowrap;
               }
             }
           }
@@ -328,98 +394,101 @@ import { CommonModule } from '@angular/common';
     }
 
     @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem;
+      }
+
       .projects-container {
-        padding: 2rem 1rem;
+        padding: 80px 0;
       }
 
-      h1::after {
-        display: none;
+      .numbered-heading {
+        font-size: 1.5rem;
+
+        .line {
+          display: none;
+        }
       }
 
-      .featured-projects .project-card.featured .project-content {
-        display: block;
+      .featured-projects .project-card.featured {
+        .project-content {
+          display: block;
+
+          &.reverse .project-info {
+            text-align: left;
+          }
+
+          &.reverse .project-tech-list,
+          &.reverse .project-links {
+            justify-content: flex-start;
+          }
+        }
 
         .project-info {
-          text-align: left !important;
-        }
+          margin-bottom: 2rem;
 
-        .project-image {
-          margin-top: 2rem;
-        }
-
-        &.reverse .project-info {
-          text-align: left !important;
-        }
-
-        &.reverse .project-tech-list,
-        &.reverse .project-links {
-          justify-content: flex-start !important;
+          .project-description {
+            padding: 1rem;
+          }
         }
       }
 
       .other-projects {
         .projects-grid {
           grid-template-columns: 1fr;
-          gap: 1.5rem;
-          max-width: 100%;
         }
 
-        .project-card {
-          max-width: 100%;
+        .project-card.small .project-inner {
           min-height: 280px;
-
-          .project-inner {
-            min-height: 280px;
-            padding: 1.5rem;
-
-            header {
-              .project-top {
-                margin-bottom: 1rem;
-              }
-
-              .project-title {
-                font-size: 1.2rem;
-              }
-
-              .project-description {
-                margin-bottom: 1rem;
-
-                p {
-                  font-size: 0.9rem;
-                }
-              }
-            }
-
-            footer {
-              .project-tech-list {
-                gap: 0.5rem;
-
-                span {
-                  font-size: 0.75rem;
-                }
-              }
-            }
-          }
+          padding: 1.5rem;
         }
       }
     }
 
     @media (max-width: 480px) {
-      .projects-container {
-        padding: 1.5rem 0.75rem;
+      .featured-projects .project-card.featured {
+        .project-info {
+          .project-title {
+            font-size: 1.5rem;
+          }
+
+          .project-description {
+            padding: 1rem;
+          }
+
+          .project-tech-list {
+            gap: 0.5rem;
+
+            li {
+              font-size: 0.8rem;
+            }
+          }
+        }
       }
 
       .other-projects {
-        .projects-grid {
-          gap: 1rem;
-        }
-
-        .project-card {
+        .project-card.small .project-inner {
           min-height: 260px;
+          padding: 1.25rem;
 
-          .project-inner {
-            min-height: 260px;
-            padding: 1.25rem;
+          header {
+            .project-top {
+              margin-bottom: 1.5rem;
+            }
+
+            .project-title {
+              font-size: 1.2rem;
+            }
+          }
+
+          footer {
+            .project-tech-list {
+              gap: 0.5rem;
+
+              li {
+                font-size: 0.75rem;
+              }
+            }
           }
         }
       }
@@ -429,19 +498,15 @@ import { CommonModule } from '@angular/common';
 export class ProjectsComponent {
   featuredProjects = [
     {
-      company: 'Malogica Solutions HPC Platform',
-      role: 'Senior Frontend Developer',
-      period: '01/2023 - 03/2025',
-      description: 'Led frontend development for a high-performance computing cloud platform. Built scalable components using Angular and TypeScript, integrated with backend APIs, and ensured quality through comprehensive testing with Cypress.',
-      technologies: ['Angular', 'TypeScript', 'Cypress', 'REST APIs'],
+      title: 'HPC Cloud Platform',
+      description: 'Led frontend development for a high-performance computing cloud platform. Built scalable components using Angular and TypeScript, integrated with backend APIs, and ensured quality through comprehensive testing with Cypress. Collaborated with an agile team to deliver robust solutions.',
+      technologies: ['Angular', 'TypeScript', 'Cypress', 'Vue.js', 'REST APIs'],
       link: 'https://www.malogica.com/',
       image: 'assets/malogica.png'
     },
     {
-      company: 'Docuvera Content Platform',
-      role: 'Software Engineer',
-      period: '02/2022 - 05/2024',
-      description: 'Contributed to a comprehensive SaaS content authoring platform using modern full-stack technologies. Implemented microservices architecture and worked closely with international teams.',
+      title: 'SaaS Content Platform',
+      description: 'Contributed to a comprehensive content authoring platform using modern full-stack technologies. Implemented microservices architecture with Angular, Node.js, PostgreSQL, and AWS. Worked closely with international teams to deliver scalable solutions.',
       technologies: ['Angular', 'Node.js', 'PostgreSQL', 'AWS', 'Microservices'],
       link: 'https://docuvera.com/',
       image: 'assets/docuvera.png'
@@ -450,40 +515,28 @@ export class ProjectsComponent {
 
   otherProjects = [
     {
-      company: 'Logmaster Mobile App',
-      role: 'Mobile Developer',
-      period: 'Jun 2024 - Sep 2024',
-      description: 'Enhanced mobile app for transport compliance and electronic work diary system using Ionic and Angular.',
+      title: 'Transport Compliance App',
+      description: 'Enhanced mobile app for transport compliance and electronic work diary system using Ionic and Angular with Firebase backend.',
       technologies: ['Ionic', 'Angular', 'Firebase', 'GCP'],
-      link: 'https://logmaster.com.au/',
-      image: 'assets/logmaster.png'
+      link: 'https://logmaster.com.au/'
     },
     {
-      company: 'Upwork Projects',
-      role: 'Freelance Developer',
-      period: '10/2024 - 01/2025',
-      description: 'Delivered multiple web and mobile solutions for startups focusing on scalable architecture.',
+      title: 'Freelance Projects',
+      description: 'Delivered multiple web and mobile solutions for startups focusing on scalable architecture and modern tech stacks.',
       technologies: ['MEAN Stack', 'React', 'Ionic', 'Firebase'],
-      link: 'https://www.upwork.com/',
-      image: 'assets/upwork.png'
+      link: 'https://www.upwork.com/'
     },
     {
-      company: 'Daisycon Platform',
-      role: 'Lead Frontend Engineer',
-      period: '01/2021 - 02/2022',
+      title: 'Affiliate Marketing Platform',
       description: 'Led frontend development for affiliate marketing platform, implementing new features and maintaining performance.',
       technologies: ['Angular', 'TypeScript', 'PHP', 'Laravel'],
-      link: 'https://www.daisycon.com/en/',
-      image: 'assets/daisycon.png'
+      link: 'https://www.daisycon.com/en/'
     },
     {
-      company: 'Droptek Solutions',
-      role: 'Frontend & Mobile Developer',
-      period: '10/2017 - 07/2019',
+      title: 'Cloud Solutions',
       description: 'Developed responsive web applications and cross-platform mobile solutions for various cloud-based projects.',
       technologies: ['Angular', 'React Native', 'AWS', 'Node.js'],
-      link: 'https://www.droptek.com/',
-      image: 'assets/droptek.png'
+      link: 'https://www.droptek.com/'
     }
   ];
 }
