@@ -62,7 +62,7 @@ import { CommonModule } from '@angular/common';
           <div class="education-item">
             <h4>Bachelor's in Computer Engineering</h4>
             <p class="institution">University of San Carlos • Philippines</p>
-            <p class="education-period">Jun 2010 - Apr 2016</p>
+            <p class="education-period">06/2010 - 04/2016</p>
             <p class="education-note">Working scholar while pursuing degree</p>
           </div>
         </div>
@@ -414,9 +414,31 @@ export class AboutComponent {
 
   experience = [
     {
+      title: 'Senior Software Developer',
+      company: 'Bermwood Technologies',
+      period: '07/2025 - 11/2025',
+      responsibilities: [
+        'Developed real estate platform using Next.js, MUI, and Google Maps API for property search and visualization.',
+        'Implemented responsive design patterns and modern frontend architecture best practices.',
+        'Integrated with backend APIs and third-party services for seamless data flow.',
+        'Collaborated with cross-functional teams to deliver high-quality features on tight deadlines.'
+      ]
+    },
+    {
+      title: 'Independent Contractor',
+      company: 'Flowroom Platform',
+      period: '04/2025 - 07/2025',
+      responsibilities: [
+        'Built RAG (Retrieval-Augmented Generation) applications using OpenAI and Replicate APIs.',
+        'Developed AI-powered features for content generation and knowledge retrieval.',
+        'Implemented scalable backend services with Node.js and integrated with various AI models.',
+        'Delivered innovative solutions for complex business requirements using cutting-edge AI technologies.'
+      ]
+    },
+    {
       title: 'Senior Frontend Developer',
       company: 'Malogica Solutions',
-      period: 'January 2023 - March 2025',
+      period: '01/2023 - 03/2025',
       responsibilities: [
         'Led a frontend team of 2 developers for an HPC cloud platform, delivering high-quality components using Angular, TypeScript, Cypress, and Vue.',
         'Collaborated with an agile team (2 backend developers, 1 QA engineer, 1 solutions architect) to integrate frontend with backend APIs.',
@@ -425,9 +447,31 @@ export class AboutComponent {
       ]
     },
     {
+      title: 'Freelance Web and Mobile Developer',
+      company: 'Upwork',
+      period: '10/2024 - 01/2025',
+      responsibilities: [
+        'Delivered web and mobile solutions for multiple clients using modern tech stacks.',
+        'Specialized in full-stack development with Angular, React, Node.js, and Firebase.',
+        'Managed client communications, project timelines, and deliverables independently.',
+        'Maintained high client satisfaction ratings through quality code and timely delivery.'
+      ]
+    },
+    {
+      title: 'Mobile Developer',
+      company: 'Logmaster Australia',
+      period: '06/2024 - 09/2024',
+      responsibilities: [
+        'Enhanced mobile app for transport compliance and electronic work diary system.',
+        'Developed features using Ionic and Angular with Firebase backend.',
+        'Implemented real-time data synchronization and offline functionality.',
+        'Collaborated with stakeholders to ensure compliance with Australian transport regulations.'
+      ]
+    },
+    {
       title: 'Senior Software Engineer',
       company: 'Direct Sourcing Solutions',
-      period: 'February 2022 - May 2024',
+      period: '02/2022 - 05/2024',
       responsibilities: [
         'Built a comprehensive SaaS platform using Angular, Node.js, PostgreSQL, and AWS microservices architecture.',
         'Focused on full-stack development and collaborated with international teams to deliver robust software solutions.',
@@ -436,9 +480,20 @@ export class AboutComponent {
       ]
     },
     {
+      title: 'Software Engineer',
+      company: 'Author-it Software',
+      period: '02/2022 - 05/2024',
+      responsibilities: [
+        'Contributed to content authoring platform development using modern full-stack technologies.',
+        'Worked with Angular, Node.js, and .NET for comprehensive feature implementation.',
+        'Collaborated with product team to translate requirements into technical solutions.',
+        'Maintained and enhanced existing codebase while ensuring backward compatibility.'
+      ]
+    },
+    {
       title: 'Lead Developer',
       company: 'CodingChiefs',
-      period: 'January 2021 - February 2022',
+      period: '01/2021 - 02/2022',
       responsibilities: [
         'Led web and mobile development projects using Angular, Ionic, and other modern frontend frameworks.',
         'Oversaw the delivery of high-quality software solutions for diverse clients across multiple industries.',
@@ -447,9 +502,20 @@ export class AboutComponent {
       ]
     },
     {
+      title: 'Freelance Software Developer',
+      company: 'Freelance',
+      period: '07/2016 - 12/2020',
+      responsibilities: [
+        'Delivered custom web and mobile solutions for startups and small businesses.',
+        'Specialized in MEAN stack, Ionic, and Firebase for rapid application development.',
+        'Built e-commerce platforms, content management systems, and mobile applications.',
+        'Managed all aspects of projects from requirements gathering to deployment and maintenance.'
+      ]
+    },
+    {
       title: 'Mobile & Frontend Developer',
       company: 'Droptek',
-      period: 'October 2017 - July 2019',
+      period: '10/2017 - 07/2019',
       responsibilities: [
         'Built mobile and web applications using Ionic, Angular, React Native, and React.js.',
         'Focused on creating responsive and efficient frontend solutions with optimal user experience.',
@@ -462,11 +528,15 @@ export class AboutComponent {
   skillCategories = [
     {
       title: 'Frontend',
-      skills: ['Angular', 'TypeScript', 'Vue.js', 'React', 'Ionic', 'HTML5/CSS3', 'SCSS/SASS']
+      skills: ['Next.js', 'Angular', 'TypeScript', 'React', 'Vue.js', 'MUI', 'Ionic', 'HTML5/CSS3', 'SCSS/SASS']
     },
     {
       title: 'Backend',
-      skills: ['Node.js', 'Express.js', 'PostgreSQL', 'MongoDB', 'Firebase', 'REST APIs', 'GraphQL']
+      skills: ['Node.js', 'Express.js', 'PostgreSQL', 'MongoDB', 'Firebase', '.NET', 'REST APIs', 'GraphQL']
+    },
+    {
+      title: 'AI & Integration',
+      skills: ['RAG Applications', 'OpenAI', 'Replicate', 'Google Maps API', 'AI/ML Integration']
     },
     {
       title: 'Cloud & DevOps',

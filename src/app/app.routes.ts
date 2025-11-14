@@ -12,6 +12,11 @@ export const routes: Routes = [
       import('./components/projects/projects.component').then(m => m.ProjectsComponent)
   },
   {
+    path: 'ai-projects',
+    loadComponent: () => 
+      import('./components/ai-projects/ai-projects.component').then(m => m.AiProjectsComponent)
+  },
+  {
     path: 'about',
     loadComponent: () => 
       import('./components/about/about.component').then(m => m.AboutComponent)

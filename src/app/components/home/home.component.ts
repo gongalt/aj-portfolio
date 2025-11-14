@@ -13,10 +13,9 @@ import { GitHubService, GitHubStats } from '../../services/github.service';
       <div class="hero-content">
         <p class="intro-text">Hi, my name is</p>
         <h1>Adrian Jenson.</h1>
-        <h2 class="subtitle">I build things for the web.</h2>
+        <h2 class="subtitle">I build things for the web & AI.</h2>
         <p class="summary">
-          A passionate Full Stack Developer seeking to leverage extensive experience in web and mobile development,
-          team leadership, and cutting-edge technologies to create impactful software solutions and contribute to innovative projects.
+          A passionate Full Stack Developer seeking to leverage extensive experience in web and mobile development, team leadership, and cutting-edge technologies to create impactful software solutions and contribute to innovative projects.
         </p>
         <div class="hero-cta">
           <a routerLink="/contact" class="btn btn-primary">Get In Touch</a>
@@ -40,17 +39,19 @@ import { GitHubService, GitHubStats } from '../../services/github.service';
               and web apps that provide intuitive, pixel-perfect user interfaces with efficient and modern backends.
             </p>
             <p>
-              My journey in software development spans over 8 years, during which I've worked with diverse teams
+              My journey in software development spans over 9 years, during which I've worked with diverse teams
               and technologies to deliver robust solutions for clients ranging from startups to established enterprises.
             </p>
             <p>Here are a few technologies I've been working with recently:</p>
             <ul class="tech-list">
+              <li><span>▹</span>Next.js</li>
               <li><span>▹</span>Angular</li>
               <li><span>▹</span>TypeScript</li>
               <li><span>▹</span>Node.js</li>
-              <li><span>▹</span>React</li>
-              <li><span>▹</span>Vue.js</li>
-              <li><span>▹</span>Firebase</li>
+              <li><span>▹</span>MUI</li>
+              <li><span>▹</span>Google Maps API</li>
+              <li><span>▹</span>RAG Applications</li>
+              <li><span>▹</span>OpenAI/Replicate</li>
             </ul>
           </div>
           <div class="about-image">
@@ -138,7 +139,7 @@ import { GitHubService, GitHubStats } from '../../services/github.service';
           Although I'm not currently looking for any new opportunities, my inbox is always open.
           Whether you have a question or just want to say hi, I'll try my best to get back to you!
         </p>
-        <a href="mailto:adrian.jenson@email.com" class="btn btn-primary contact-btn">
+        <a href="mailto:jensonadrian@gmail.com" class="btn btn-primary contact-btn">
           Say Hello
         </a>
       </div>
@@ -464,7 +465,7 @@ import { GitHubService, GitHubStats } from '../../services/github.service';
     }
 
     .contact-section {
-      padding: 100px 0 50px;
+      padding: 100px 0;
       background: var(--navy);
       color: var(--white);
       text-align: center;
@@ -590,14 +591,14 @@ export class HomeComponent implements OnInit {
 
   isLoadingGitHubStats = true;
 
-  resumeUrl = 'https://firebasestorage.googleapis.com/v0/b/ajenson.firebasestorage.app/o/resume%2FAdrian%20Resume%202025%20latest.pdf?alt=media&token=e2eb54f1-84e7-4350-9547-7db33264690a';
+  resumeUrl = 'https://firebasestorage.googleapis.com/v0/b/ajenson.firebasestorage.app/o/resume%2FAdrian_Resume_2025_Updated.pdf?alt=media&token=89fbfab4-0993-44dc-a4cf-a0bbba5b5c59';
 
   topSkills = [
     { name: 'Angular', years: 8, level: 95, projects: 15 },
     { name: 'TypeScript', years: 8, level: 95, projects: 15 },
     { name: 'Node.js', years: 6, level: 90, projects: 12 },
     { name: 'React', years: 4, level: 80, projects: 8 },
-    { name: 'Vue.js', years: 3, level: 75, projects: 6 },
+    { name: 'AI Integration', years: 1, level: 85, projects: 5 },
     { name: 'Firebase', years: 6, level: 85, projects: 10 }
   ];
 

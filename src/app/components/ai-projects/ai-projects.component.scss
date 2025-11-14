@@ -1,0 +1,343 @@
+:host {
+  --navy: #0a192f;
+  --light-navy: #112240;
+  --green: #64ffda;
+  --slate: #8892b0;
+  --light-slate: #a8b2d1;
+  --lightest-slate: #ccd6f6;
+  --white: #e6f1ff;
+  --ai-purple: #9b59b6;
+  --ai-blue: #3498db;
+}
+
+.ai-projects-container {
+  background: var(--navy);
+  color: var(--white);
+  padding: 100px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.numbered-heading {
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--lightest-slate);
+  margin-bottom: 2rem;
+
+  .number {
+    color: var(--green);
+    font-family: 'Courier New', monospace;
+    font-size: 1.25rem;
+    margin-right: 0.5rem;
+  }
+
+  .title {
+    white-space: nowrap;
+  }
+
+  .line {
+    flex-grow: 1;
+    height: 1px;
+    background: #303c55;
+    margin-left: 1rem;
+  }
+}
+
+.section-description {
+  color: var(--slate);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin-bottom: 4rem;
+
+  strong {
+    color: var(--green);
+    font-weight: 600;
+  }
+}
+
+.ai-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 5rem;
+}
+
+.ai-project-card {
+  background: var(--light-navy);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  border: 1px solid transparent;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-5px);
+    border-color: var(--green);
+    box-shadow: 0 20px 40px -15px rgba(2, 12, 27, 0.7);
+
+    .project-image {
+      transform: scale(1.05);
+    }
+
+    .image-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.project-image-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--light-navy), #233554);
+
+  .project-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+
+  .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, rgba(10, 25, 47, 0.7) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .project-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    &.status-live {
+      background: rgba(100, 255, 218, 0.2);
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+
+    &.status-beta {
+      background: rgba(52, 152, 219, 0.2);
+      color: var(--ai-blue);
+      border: 1px solid var(--ai-blue);
+    }
+
+    &.status-dev {
+      background: rgba(155, 89, 182, 0.2);
+      color: var(--ai-purple);
+      border: 1px solid var(--ai-purple);
+    }
+  }
+}
+
+.project-content {
+  padding: 2rem;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  .project-title {
+    color: var(--lightest-slate);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .project-category {
+    color: var(--green);
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--green);
+    border-radius: 20px;
+  }
+}
+
+.project-description {
+  color: var(--light-slate);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.project-details {
+  margin-bottom: 1.5rem;
+
+  .long-description {
+    color: var(--slate);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+.project-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+
+  .tech-tag {
+    background: rgba(100, 255, 218, 0.1);
+    color: var(--green);
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+  }
+}
+
+.project-actions {
+  .platform-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--slate);
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    opacity: 0.8;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      color: var(--green);
+    }
+  }
+}
+
+.ai-cta {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--light-navy);
+  border-radius: 8px;
+  border: 1px solid #233554;
+
+  h3 {
+    color: var(--lightest-slate);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: var(--slate);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 1.25rem 2rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: transparent;
+    color: var(--green);
+    border: 2px solid var(--green);
+
+    &:hover {
+      background: rgba(100, 255, 218, 0.1);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-projects-container {
+    padding: 80px 0;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .numbered-heading {
+    font-size: 1.5rem;
+
+    .line {
+      display: none;
+    }
+  }
+
+  .section-description {
+    font-size: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .ai-projects-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .project-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .ai-cta {
+    padding: 3rem 1.5rem;
+
+    h3 {
+      font-size: 1.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .project-image-container {
+    height: 180px;
+  }
+
+  .project-content {
+    padding: 1.5rem;
+  }
+
+  .project-header .project-title {
+    font-size: 1.25rem;
+  }
+
+  .project-description {
+    font-size: 0.95rem;
+  }
+
+  .project-tech .tech-tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+  }
+}

@@ -35,9 +35,7 @@ import { CommonModule } from '@angular/common';
               </div>
               <div class="project-image">
                 <a [href]="project.link" target="_blank">
-                  <div class="image-placeholder">
-                    <span>{{ project.title.charAt(0) }}</span>
-                  </div>
+                  <img [src]="project.image" [alt]="project.title + ' screenshot'" class="project-img">
                   <div class="image-overlay"></div>
                 </a>
               </div>
@@ -92,7 +90,6 @@ import { CommonModule } from '@angular/common';
       background: var(--navy);
       color: var(--white);
       padding: 100px 0;
-      min-height: 100vh;
     }
 
     .container {
@@ -251,22 +248,12 @@ import { CommonModule } from '@angular/common';
           display: block;
         }
 
-        .image-placeholder {
+        .project-img {
           width: 100%;
           height: 300px;
-          background: linear-gradient(135deg, var(--light-navy), #233554);
+          object-fit: cover;
           border-radius: 4px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 1px solid #233554;
           transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-
-          span {
-            font-size: 3rem;
-            color: var(--green);
-            font-weight: bold;
-          }
         }
 
         .image-overlay {
@@ -280,8 +267,14 @@ import { CommonModule } from '@angular/common';
           transition: opacity 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
 
-        &:hover .image-overlay {
-          opacity: 0;
+        &:hover {
+          .image-overlay {
+            opacity: 0;
+          }
+          
+          .project-img {
+            transform: scale(1.05);
+          }
         }
       }
     }
@@ -498,22 +491,38 @@ import { CommonModule } from '@angular/common';
 export class ProjectsComponent {
   featuredProjects = [
     {
+      title: 'Real Estate Platform',
+      description: 'Developed comprehensive real estate platform using Next.js and MUI for property search and visualization. Integrated Google Maps API for interactive property location mapping and implemented responsive design patterns for optimal user experience across all devices.',
+      technologies: ['Next.js', 'MUI', 'Google Maps API', 'TypeScript', 'REST APIs'],
+      link: 'https://bermwood.com/',
+      image: 'https://via.placeholder.com/600x400/112240/64ffda?text=Real+Estate+Platform',
+      github: null
+    },
+    {
+      title: 'RAG AI Applications',
+      description: 'Built cutting-edge RAG (Retrieval-Augmented Generation) applications using OpenAI and Replicate APIs. Implemented AI-powered features for content generation and knowledge retrieval, delivering innovative solutions for complex business requirements.',
+      technologies: ['OpenAI', 'Replicate', 'Node.js', 'RAG', 'AI/ML'],
+      link: 'https://flowroom.com/',
+      image: 'https://via.placeholder.com/600x400/112240/64ffda?text=RAG+AI+Applications',
+      github: null
+    },
+    {
       title: 'HPC Cloud Platform',
       description: 'Led frontend development for a high-performance computing cloud platform. Built scalable components using Angular and TypeScript, integrated with backend APIs, and ensured quality through comprehensive testing with Cypress. Collaborated with an agile team to deliver robust solutions.',
       technologies: ['Angular', 'TypeScript', 'Cypress', 'Vue.js', 'REST APIs'],
       link: 'https://www.malogica.com/',
-      image: 'assets/malogica.png'
-    },
-    {
-      title: 'SaaS Content Platform',
-      description: 'Contributed to a comprehensive content authoring platform using modern full-stack technologies. Implemented microservices architecture with Angular, Node.js, PostgreSQL, and AWS. Worked closely with international teams to deliver scalable solutions.',
-      technologies: ['Angular', 'Node.js', 'PostgreSQL', 'AWS', 'Microservices'],
-      link: 'https://docuvera.com/',
-      image: 'assets/docuvera.png'
+      image: 'https://via.placeholder.com/600x400/112240/64ffda?text=HPC+Cloud+Platform',
+      github: null
     }
   ];
 
   otherProjects = [
+    {
+      title: 'SaaS Content Platform',
+      description: 'Contributed to comprehensive content authoring platform using modern full-stack technologies with Angular, Node.js, .NET, PostgreSQL, and AWS microservices architecture.',
+      technologies: ['Angular', 'Node.js', '.NET', 'PostgreSQL', 'AWS'],
+      link: 'https://docuvera.com/'
+    },
     {
       title: 'Transport Compliance App',
       description: 'Enhanced mobile app for transport compliance and electronic work diary system using Ionic and Angular with Firebase backend.',
@@ -522,20 +531,14 @@ export class ProjectsComponent {
     },
     {
       title: 'Freelance Projects',
-      description: 'Delivered multiple web and mobile solutions for startups focusing on scalable architecture and modern tech stacks.',
+      description: 'Delivered multiple web and mobile solutions for startups and businesses focusing on scalable architecture and modern tech stacks.',
       technologies: ['MEAN Stack', 'React', 'Ionic', 'Firebase'],
       link: 'https://www.upwork.com/'
     },
     {
-      title: 'Affiliate Marketing Platform',
-      description: 'Led frontend development for affiliate marketing platform, implementing new features and maintaining performance.',
-      technologies: ['Angular', 'TypeScript', 'PHP', 'Laravel'],
-      link: 'https://www.daisycon.com/en/'
-    },
-    {
       title: 'Cloud Solutions',
-      description: 'Developed responsive web applications and cross-platform mobile solutions for various cloud-based projects.',
-      technologies: ['Angular', 'React Native', 'AWS', 'Node.js'],
+      description: 'Developed responsive web applications and cross-platform mobile solutions for various cloud-based projects using modern frameworks.',
+      technologies: ['Angular', 'React Native', 'Ionic', 'Node.js'],
       link: 'https://www.droptek.com/'
     }
   ];
