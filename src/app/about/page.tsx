@@ -178,7 +178,7 @@ export default function AboutPage() {
               />
               <div className="relative rounded overflow-hidden w-full h-full bg-navy-light">
                 <Image
-                  src="/images/profile.jpg"
+                  src="https://firebasestorage.googleapis.com/v0/b/ajenson.firebasestorage.app/o/resume%2Fpictureist.jpg?alt=media&token=b7e77db7-ee87-4135-9424-e6112e385d67"
                   alt="Adrian Jenson — full-stack developer"
                   fill
                   className="object-cover grayscale hover:grayscale-0 transition-all duration-500"

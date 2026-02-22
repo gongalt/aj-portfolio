@@ -94,16 +94,21 @@ export default function Navbar() {
     setMobileOpen(false);
   }, [pathname]);
 
-  // Prevent body scroll when mobile menu open
+  // Prevent body scroll when mobile menu open + close on Escape
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setMobileOpen(false);
+      };
+      document.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        document.removeEventListener("keydown", handleKeyDown);
+      };
     } else {
       document.body.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
   }, [mobileOpen]);
 
   // Check if a nav item is active
@@ -207,7 +212,7 @@ export default function Navbar() {
               style={{ transitionDelay: `${150 + NAV_ITEMS.length * 80}ms` }}
             >
               <a
-                href="/Adrian_Resume_2025.pdf"
+                href="/Adrian_Resume_2026.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={[
@@ -334,7 +339,7 @@ export default function Navbar() {
             }}
           >
             <a
-              href="/Adrian_Resume_2025.pdf"
+              href="/Adrian_Resume_2026.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className={[

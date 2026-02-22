@@ -63,21 +63,34 @@ function ExternalLinkIcon() {
   );
 }
 
-function ProjectPlaceholder({ alt }: { alt: string }) {
+function ProjectPlaceholder({ alt, url }: { alt: string; url: string }) {
+  const hostname = new URL(url).hostname.replace("www.", "");
   return (
-    <div
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
       className="
-        w-full h-full min-h-[220px]
-        bg-navy rounded-lg
-        border border-navy-lighter
-        flex items-center justify-center
+        block w-full h-full min-h-[220px]
+        bg-gradient-to-br from-navy-lighter/80 to-navy
+        rounded-lg border border-navy-lighter
+        flex flex-col items-center justify-center gap-3
+        group/img hover:border-green-accent/40
+        transition-all duration-300
       "
-      aria-label={alt}
+      aria-label={`Visit ${alt}`}
     >
-      <span className="font-mono text-slate/40 text-xs px-4 text-center">
-        {alt}
+      <span className="font-mono text-green-accent text-sm opacity-60 group-hover/img:opacity-100 transition-opacity">
+        {hostname}
       </span>
-    </div>
+      <svg
+        className="w-5 h-5 text-slate/30 group-hover/img:text-green-accent/60 transition-colors"
+        fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}
+        aria-hidden="true"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+      </svg>
+    </a>
   );
 }
 
@@ -150,7 +163,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
         {/* Image / placeholder */}
         <div className="relative aspect-video lg:aspect-auto lg:h-52">
-          <ProjectPlaceholder alt={project.imageAlt} />
+          <ProjectPlaceholder alt={project.imageAlt} url={project.externalUrl} />
         </div>
       </div>
     </article>
