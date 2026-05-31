@@ -255,8 +255,8 @@ export default function Navbar() {
       <div
         aria-hidden="true"
         className={[
-          "fixed inset-0 z-40 bg-navy/70 backdrop-blur-sm md:hidden",
-          "transition-opacity duration-300",
+          "fixed inset-0 z-40 bg-navy/80 backdrop-blur-md md:hidden",
+          "transition-all duration-400 ease-in-out",
           mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
         ].join(" ")}
         onClick={() => setMobileOpen(false)}

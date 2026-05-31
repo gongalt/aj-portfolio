@@ -1,6 +1,15 @@
 // Server Component — no 'use client' needed
 import Link from "next/link";
 
+// ── Quick nav links ──────────────────────────────────────────────────────────
+const QUICK_LINKS = [
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Work", href: "/work" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
+];
+
 // ── Social link data ──────────────────────────────────────────────────────────
 const SOCIAL_LINKS = [
   {
@@ -68,6 +77,19 @@ export default function Footer() {
       role="contentinfo"
       aria-label="Site footer"
     >
+      {/* Quick navigation */}
+      <nav aria-label="Footer navigation" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+        {QUICK_LINKS.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="font-mono text-xs text-slate hover:text-green-accent transition-colors duration-200"
+          >
+            {link.label}
+          </Link>
+        ))}
+      </nav>
+
       {/* Social links row */}
       <nav
         aria-label="Social links"

@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WMS Software - UI Preview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e3a8a;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--gray-100); color: var(--gray-800); }
+
+        /* Navigation between screens */
+        .screen-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: var(--gray-900); padding: 12px 24px; display: flex; align-items: center; gap: 12px; overflow-x: auto; }
+        .screen-nav h1 { color: white; font-size: 14px; white-space: nowrap; margin-right: 12px; padding-right: 12px; border-right: 1px solid var(--gray-600); }
+        .screen-btn { background: var(--gray-700); color: var(--gray-300); border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; white-space: nowrap; transition: all 0.2s; }
+        .screen-btn:hover, .screen-btn.active { background: var(--primary); color: white; }
+        .screen { display: none; padding-top: 60px; min-height: 100vh; }
+        .screen.active { display: block; }
+
+        /* Dashboard Layout */
+        .app-layout { display: flex; min-height: calc(100vh - 60px); }
+        .sidebar { width: 240px; background: white; border-right: 1px solid var(--gray-200); padding: 20px 0; flex-shrink: 0; }
+        .sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid var(--gray-200); margin-bottom: 8px; }
+        .sidebar-logo h2 { font-size: 18px; color: var(--primary-dark); }
+        .sidebar-logo span { font-size: 11px; color: var(--gray-400); }
+        .nav-section { padding: 8px 12px; }
+        .nav-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); padding: 8px; font-weight: 600; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; color: var(--gray-600); font-size: 13px; cursor: pointer; transition: all 0.15s; text-decoration: none; }
+        .nav-item:hover { background: var(--gray-50); color: var(--gray-800); }
+        .nav-item.active { background: #eff6ff; color: var(--primary); font-weight: 500; }
+        .nav-icon { width: 18px; text-align: center; font-size: 14px; }
+        .nav-badge { margin-left: auto; background: var(--danger); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 600; }
+        .main-content { flex: 1; padding: 24px; overflow-x: auto; }
+
+        /* Header */
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); }
+        .page-subtitle { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+        .header-actions { display: flex; gap: 8px; }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-outline { background: white; border-color: var(--gray-300); color: var(--gray-700); }
+        .btn-outline:hover { background: var(--gray-50); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+        /* Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--gray-200); }
+        .stat-label { font-size: 12px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--gray-900); margin: 4px 0; }
+        .stat-change { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+        .stat-change.up { color: var(--success); }
+        .stat-change.down { color: var(--danger); }
+        .stat-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px; }
+        .stat-icon.blue { background: #dbeafe; color: var(--primary); }
+        .stat-icon.green { background: #d1fae5; color: var(--success); }
+        .stat-icon.orange { background: #fef3c7; color: var(--warning); }
+        .stat-icon.red { background: #fee2e2; color: var(--danger); }
+
+        /* Tables */
+        .card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--gray-200); overflow: hidden; margin-bottom: 24px; }
+        .card-header { padding: 16px 20px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+        .card-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); font-weight: 600; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+        td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+        tr:hover td { background: var(--gray-50); }
+
+        /* Badges */
+        .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+        .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+        /* Grid layouts */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+        /* Tenant selector */
+        .tenant-selector { display: flex; align-items: center; gap: 8px; background: white; border: 1px solid var(--gray-300); border-radius: 6px; padding: 6px 12px; font-size: 13px; }
+        .tenant-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .tenant-dot.active { background: var(--success); }
+
+        /* Search */
+        .search-box { display: flex; align-items: center; gap: 8px; background: white; border: 1px solid var(--gray-300); border-radius: 6px; padding: 6px 12px; width: 280px; }
+        .search-box input { border: none; outline: none; font-size: 13px; flex: 1; color: var(--gray-700); }
+
+        /* Mobile screen simulation */
+        .mobile-frame { width: 375px; height: 700px; border: 3px solid var(--gray-800); border-radius: 24px; overflow: hidden; margin: 20px auto; background: white; box-shadow: var(--shadow-lg); }
+        .mobile-header { background: var(--primary); color: white; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+        .mobile-header h3 { font-size: 16px; font-weight: 600; }
+        .mobile-body { padding: 16px; height: calc(100% - 60px - 56px); overflow-y: auto; }
+        .mobile-footer { display: flex; border-top: 1px solid var(--gray-200); background: white; }
+        .mobile-tab { flex: 1; padding: 8px; text-align: center; font-size: 10px; color: var(--gray-500); cursor: pointer; }
+        .mobile-tab.active { color: var(--primary); font-weight: 600; }
+        .mobile-tab-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+
+        /* Scan area */
+        .scan-area { background: var(--gray-50); border: 2px dashed var(--gray-300); border-radius: 12px; padding: 30px; text-align: center; margin-bottom: 16px; }
+        .scan-area.active { border-color: var(--primary); background: #eff6ff; }
+        .scan-icon { font-size: 40px; margin-bottom: 8px; }
+        .scan-text { font-size: 14px; color: var(--gray-500); }
+
+        /* Pick item card */
+        .pick-card { background: white; border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+        .pick-card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px; }
+        .pick-sku { font-weight: 600; font-size: 15px; color: var(--gray-900); }
+        .pick-qty { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .pick-location { display: inline-flex; align-items: center; gap: 4px; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+        .pick-detail { font-size: 12px; color: var(--gray-500); }
+
+        /* Progress */
+        .progress-bar { height: 6px; background: var(--gray-200); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+        .progress-fill.blue { background: var(--primary-light); }
+        .progress-fill.green { background: var(--success); }
+
+        /* Warehouse map (simplified) */
+        .warehouse-map { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 16px; }
+        .map-cell { aspect-ratio: 1; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+        .map-cell.occupied { background: #dbeafe; color: var(--primary); border: 1px solid #93c5fd; }
+        .map-cell.empty { background: var(--gray-100); color: var(--gray-400); border: 1px solid var(--gray-200); }
+        .map-cell.alert { background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; }
+        .map-cell.full { background: #d1fae5; color: var(--success); border: 1px solid #6ee7b7; }
+        .map-cell:hover { transform: scale(1.1); box-shadow: var(--shadow); }
+        .map-legend { display: flex; gap: 16px; padding: 12px 16px; border-top: 1px solid var(--gray-200); }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--gray-600); }
+        .legend-color { width: 12px; height: 12px; border-radius: 3px; }
+
+        /* Activity feed */
+        .activity-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+        .activity-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .activity-icon.receive { background: #d1fae5; color: var(--success); }
+        .activity-icon.pick { background: #dbeafe; color: var(--primary); }
+        .activity-icon.ship { background: #fef3c7; color: var(--warning); }
+        .activity-icon.adjust { background: #fee2e2; color: var(--danger); }
+        .activity-text { font-size: 13px; color: var(--gray-700); }
+        .activity-time { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+        .activity-bold { font-weight: 600; color: var(--gray-900); }
+
+        /* Presentation title screen */
+        .title-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 60px); background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, #6366f1 100%); color: white; text-align: center; padding: 40px; }
+        .title-screen h1 { font-size: 48px; font-weight: 800; margin-bottom: 16px; }
+        .title-screen p { font-size: 20px; opacity: 0.9; max-width: 600px; line-height: 1.6; }
+        .title-screen .subtitle { font-size: 14px; opacity: 0.7; margin-top: 24px; letter-spacing: 2px; text-transform: uppercase; }
+        .title-features { display: flex; gap: 40px; margin-top: 48px; }
+        .title-feature { text-align: center; }
+        .title-feature-icon { font-size: 32px; margin-bottom: 8px; }
+        .title-feature-text { font-size: 13px; opacity: 0.8; }
+
+        /* Chart placeholder */
+        .chart-placeholder { padding: 20px; text-align: center; }
+        .bar-chart { display: flex; align-items: flex-end; justify-content: center; gap: 12px; height: 200px; padding: 20px; }
+        .bar { width: 40px; border-radius: 4px 4px 0 0; transition: height 0.3s; position: relative; }
+        .bar-label { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--gray-500); white-space: nowrap; }
+        .bar-value { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 600; color: var(--gray-700); }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Screen Navigation -->
+<div class="screen-nav">
+    <h1>WMS Preview</h1>
+    <button class="screen-btn active" onclick="showScreen('title')">Cover</button>
+    <button class="screen-btn" onclick="showScreen('dashboard')">Dashboard</button>
+    <button class="screen-btn" onclick="showScreen('inventory')">Inventory</button>
+    <button class="screen-btn" onclick="showScreen('receiving')">Receiving</button>
+    <button class="screen-btn" onclick="showScreen('warehouse-map')">Warehouse Map</button>
+    <button class="screen-btn" onclick="showScreen('picking-mobile')">Picking (Mobile)</button>
+    <button class="screen-btn" onclick="showScreen('clients')">Clients/Tenants</button>
+    <button class="screen-btn" onclick="showScreen('billing')">3PL Billing</button>
+    <button class="screen-btn" onclick="showScreen('reports')">Reports</button>
+</div>
+
+<!-- Screen 0: Title -->
+<div id="title" class="screen active">
+    <div class="title-screen">
+        <div class="subtitle">3PL Warehouse Management System</div>
+        <h1>WMS Software</h1>
+        <p>Modern, multi-tenant warehouse management built for your operations. Real-time inventory tracking, barcode scanning, and automated billing.</p>
+        <div class="title-features">
+            <div class="title-feature">
+                <div class="title-feature-icon">&#x1F4E6;</div>
+                <div class="title-feature-text">Multi-Tenant<br>Inventory</div>
+            </div>
+            <div class="title-feature">
+                <div class="title-feature-icon">&#x1F4F1;</div>
+                <div class="title-feature-text">Mobile-First<br>Scanning</div>
+            </div>
+            <div class="title-feature">
+                <div class="title-feature-icon">&#x1F4CA;</div>
+                <div class="title-feature-text">Real-Time<br>Analytics</div>
+            </div>
+            <div class="title-feature">
+                <div class="title-feature-icon">&#x1F512;</div>
+                <div class="title-feature-text">Secure<br>On-Premise</div>
+            </div>
+            <div class="title-feature">
+                <div class="title-feature-icon">&#x1F4B0;</div>
+                <div class="title-feature-text">Automated<br>3PL Billing</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Screen 1: Dashboard -->
+<div id="dashboard" class="screen">
+    <div class="app-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <h2>WMS</h2>
+                <span>Warehouse Management System</span>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a class="nav-item active"><span class="nav-icon">&#x1F4CA;</span> Dashboard</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4E6;</span> Inventory</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F3E0;</span> Warehouse Map</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Operations</div>
+                <a class="nav-item"><span class="nav-icon">&#x1F4E5;</span> Receiving <span class="nav-badge">3</span></a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CD;</span> Putaway</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F6D2;</span> Picking <span class="nav-badge">12</span></a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4E6;</span> Packing</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F69A;</span> Shipping</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a class="nav-item"><span class="nav-icon">&#x1F465;</span> Clients</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CB;</span> Orders</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F9FE;</span> Billing</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4C8;</span> Reports</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">System</div>
+                <a class="nav-item"><span class="nav-icon">&#x2699;&#xFE0F;</span> Settings</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F464;</span> Users</a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Dashboard</div>
+                    <div class="page-subtitle">Monday, February 24, 2026 - Warehouse Overview</div>
+                </div>
+                <div class="header-actions">
+                    <div class="tenant-selector">
+                        <div class="tenant-dot active"></div>
+                        All Clients
+                        <span style="font-size:12px; color: var(--gray-400);">&#x25BC;</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">&#x1F4E6;</div>
+                    <div class="stat-label">Total Pallets Stored</div>
+                    <div class="stat-value">2,847</div>
+                    <div class="stat-change up">&#x2191; 12% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">&#x1F4E5;</div>
+                    <div class="stat-label">Received Today</div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-change up">&#x2191; 3 POs in progress</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">&#x1F6D2;</div>
+                    <div class="stat-label">Orders Pending</div>
+                    <div class="stat-value">43</div>
+                    <div class="stat-change down">&#x2193; 8 overdue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red">&#x1F69A;</div>
+                    <div class="stat-label">Shipped Today</div>
+                    <div class="stat-value">89</div>
+                    <div class="stat-change up">&#x2191; On track</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Recent Activity</div>
+                        <button class="btn btn-outline btn-sm">View All</button>
+                    </div>
+                    <div style="padding: 16px;">
+                        <div class="activity-item">
+                            <div class="activity-icon receive">&#x1F4E5;</div>
+                            <div>
+                                <div class="activity-text"><span class="activity-bold">PO-2026-0847</span> received - 24 pallets from Virginia</div>
+                                <div class="activity-time">5 minutes ago - by Juan D.</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon pick">&#x1F6D2;</div>
+                            <div>
+                                <div class="activity-text"><span class="activity-bold">SO-2026-1203</span> picking completed - 48 items</div>
+                                <div class="activity-time">12 minutes ago - by Maria S.</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon ship">&#x1F69A;</div>
+                            <div>
+                                <div class="activity-text"><span class="activity-bold">SHIP-4521</span> dispatched via LBC Express</div>
+                                <div class="activity-time">28 minutes ago - by Pedro R.</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon adjust">&#x26A0;&#xFE0F;</div>
+                            <div>
+                                <div class="activity-text"><span class="activity-bold">Cycle Count</span> variance detected - Zone B, Aisle 3</div>
+                                <div class="activity-time">45 minutes ago - by System</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon receive">&#x1F4E5;</div>
+                            <div>
+                                <div class="activity-text"><span class="activity-bold">PO-2026-0845</span> received - 12 pallets from Client ABC</div>
+                                <div class="activity-time">1 hour ago - by Carlos T.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Storage by Client</div>
+                        <button class="btn btn-outline btn-sm">Full Report</button>
+                    </div>
+                    <div class="bar-chart">
+                        <div class="bar" style="height: 160px; background: var(--primary);">
+                            <div class="bar-value">842</div>
+                            <div class="bar-label">Virginia</div>
+                        </div>
+                        <div class="bar" style="height: 120px; background: #6366f1;">
+                            <div class="bar-value">623</div>
+                            <div class="bar-label">ABC Corp</div>
+                        </div>
+                        <div class="bar" style="height: 100px; background: #8b5cf6;">
+                            <div class="bar-value">518</div>
+                            <div class="bar-label">DEF Inc</div>
+                        </div>
+                        <div class="bar" style="height: 80px; background: #a78bfa;">
+                            <div class="bar-value">412</div>
+                            <div class="bar-label">GHI Ltd</div>
+                        </div>
+                        <div class="bar" style="height: 55px; background: #c4b5fd;">
+                            <div class="bar-value">287</div>
+                            <div class="bar-label">JKL Co</div>
+                        </div>
+                        <div class="bar" style="height: 35px; background: #ddd6fe;">
+                            <div class="bar-value">165</div>
+                            <div class="bar-label">Others</div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px 20px; border-top: 1px solid var(--gray-200); font-size: 12px; color: var(--gray-500); text-align: center;">
+                        Pallets stored per client - Current month
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Active Pick Tasks</div>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <span>&#x1F50D;</span>
+                            <input placeholder="Search orders...">
+                        </div>
+                        <button class="btn btn-primary btn-sm">+ Create Wave</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Client</th>
+                            <th>Items</th>
+                            <th>Picker</th>
+                            <th>Zone</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600;">SO-2026-1208</td>
+                            <td>Virginia</td>
+                            <td>24 items / 6 pallets</td>
+                            <td>Maria S.</td>
+                            <td>Zone A</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div class="progress-bar" style="width: 100px;"><div class="progress-fill green" style="width: 75%;"></div></div>
+                                    <span style="font-size: 12px; color: var(--gray-500);">18/24</span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-info">In Progress</span></td>
+                            <td><span class="badge badge-danger">Rush</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">SO-2026-1207</td>
+                            <td>ABC Corp</td>
+                            <td>12 items / 3 pallets</td>
+                            <td>Pedro R.</td>
+                            <td>Zone B</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div class="progress-bar" style="width: 100px;"><div class="progress-fill blue" style="width: 33%;"></div></div>
+                                    <span style="font-size: 12px; color: var(--gray-500);">4/12</span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-info">In Progress</span></td>
+                            <td><span class="badge badge-warning">High</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">SO-2026-1206</td>
+                            <td>DEF Inc</td>
+                            <td>36 items / 9 pallets</td>
+                            <td>Unassigned</td>
+                            <td>Zone A, C</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div class="progress-bar" style="width: 100px;"><div class="progress-fill blue" style="width: 0%;"></div></div>
+                                    <span style="font-size: 12px; color: var(--gray-500);">0/36</span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-gray">Pending</span></td>
+                            <td><span class="badge badge-gray">Normal</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">SO-2026-1205</td>
+                            <td>Virginia</td>
+                            <td>8 items / 2 pallets</td>
+                            <td>Juan D.</td>
+                            <td>Zone B</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div class="progress-bar" style="width: 100px;"><div class="progress-fill green" style="width: 100%;"></div></div>
+                                    <span style="font-size: 12px; color: var(--gray-500);">8/8</span>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-success">Complete</span></td>
+                            <td><span class="badge badge-gray">Normal</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Screen 2: Inventory -->
+<div id="inventory" class="screen">
+    <div class="app-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo"><h2>WMS</h2><span>Warehouse Management System</span></div>
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CA;</span> Dashboard</a>
+                <a class="nav-item active"><span class="nav-icon">&#x1F4E6;</span> Inventory</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F3E0;</span> Warehouse Map</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Operations</div>
+                <a class="nav-item"><span class="nav-icon">&#x1F4E5;</span> Receiving</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CD;</span> Putaway</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F6D2;</span> Picking</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4E6;</span> Packing</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F69A;</span> Shipping</a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Inventory</div>
+                    <div class="page-subtitle">Real-time inventory across all locations</div>
+                </div>
+                <div class="header-actions">
+                    <div class="tenant-selector">
+                        <div class="tenant-dot active"></div>
+                        Virginia
+                        <span style="font-size:12px; color: var(--gray-400);">&#x25BC;</span>
+                    </div>
+                    <div class="search-box">
+                        <span>&#x1F50D;</span>
+                        <input placeholder="Search SKU, product name, location...">
+                    </div>
+                    <button class="btn btn-outline">Export</button>
+                    <button class="btn btn-primary">+ Adjustment</button>
+                </div>
+            </div>
+
+            <div class="stats-grid" style="grid-template-columns: repeat(5, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-label">Total SKUs</div>
+                    <div class="stat-value" style="font-size: 22px;">1,247</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Units</div>
+                    <div class="stat-value" style="font-size: 22px;">48,392</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pallets</div>
+                    <div class="stat-value" style="font-size: 22px;">842</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Locations Used</div>
+                    <div class="stat-value" style="font-size: 22px;">623/800</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Low Stock Alerts</div>
+                    <div class="stat-value" style="font-size: 22px; color: var(--danger);">14</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Inventory List - Virginia</div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-outline btn-sm">All</button>
+                        <button class="btn btn-outline btn-sm">Low Stock</button>
+                        <button class="btn btn-outline btn-sm">Expiring Soon</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Product Name</th>
+                            <th>Location</th>
+                            <th>Lot #</th>
+                            <th>Expiry</th>
+                            <th>On Hand</th>
+                            <th>Allocated</th>
+                            <th>Available</th>
+                            <th>Pallet ID</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600; font-family: monospace;">VRG-CIG-001</td>
+                            <td>Virginia Classic Red 20s</td>
+                            <td><span style="font-family: monospace; background: var(--gray-100); padding: 2px 6px; border-radius: 4px;">A-01-03-02</span></td>
+                            <td>LOT-2026-0142</td>
+                            <td>2027-02-15</td>
+                            <td style="font-weight: 600;">2,400</td>
+                            <td style="color: var(--warning);">600</td>
+                            <td style="font-weight: 600; color: var(--success);">1,800</td>
+                            <td style="font-family: monospace;">PLT-00847</td>
+                            <td><span class="badge badge-success">OK</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600; font-family: monospace;">VRG-CIG-002</td>
+                            <td>Virginia Menthol 20s</td>
+                            <td><span style="font-family: monospace; background: var(--gray-100); padding: 2px 6px; border-radius: 4px;">A-01-03-03</span></td>
+                            <td>LOT-2026-0138</td>
+                            <td>2027-01-20</td>
+                            <td style="font-weight: 600;">1,800</td>
+                            <td style="color: var(--warning);">200</td>
+                            <td style="font-weight: 600; color: var(--success);">1,600</td>
+                            <td style="font-family: monospace;">PLT-00843</td>
+                            <td><span class="badge badge-success">OK</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600; font-family: monospace;">VRG-CIG-005</td>
+                            <td>Virginia Lights 20s</td>
+                            <td><span style="font-family: monospace; background: var(--gray-100); padding: 2px 6px; border-radius: 4px;">A-02-01-01</span></td>
+                            <td>LOT-2026-0135</td>
+                            <td style="color: var(--warning);">2026-04-10</td>
+                            <td style="font-weight: 600;">480</td>
+                            <td style="color: var(--warning);">0</td>
+                            <td style="font-weight: 600; color: var(--warning);">480</td>
+                            <td style="font-family: monospace;">PLT-00821</td>
+                            <td><span class="badge badge-warning">Expiring Soon</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600; font-family: monospace;">VRG-SNK-012</td>
+                            <td>Virginia Chips BBQ 150g</td>
+                            <td><span style="font-family: monospace; background: var(--gray-100); padding: 2px 6px; border-radius: 4px;">B-03-02-04</span></td>
+                            <td>LOT-2026-0099</td>
+                            <td>2026-08-30</td>
+                            <td style="font-weight: 600;">120</td>
+                            <td style="color: var(--warning);">80</td>
+                            <td style="font-weight: 600; color: var(--danger);">40</td>
+                            <td style="font-family: monospace;">PLT-00798</td>
+                            <td><span class="badge badge-danger">Low Stock</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600; font-family: monospace;">VRG-BEV-003</td>
+                            <td>Virginia Energy Drink 330ml</td>
+                            <td><span style="font-family: monospace; background: var(--gray-100); padding: 2px 6px; border-radius: 4px;">C-01-01-01</span></td>
+                            <td>LOT-2026-0156</td>
+                            <td>2027-06-15</td>
+                            <td style="font-weight: 600;">3,600</td>
+                            <td style="color: var(--warning);">1,200</td>
+                            <td style="font-weight: 600; color: var(--success);">2,400</td>
+                            <td style="font-family: monospace;">PLT-00851</td>
+                            <td><span class="badge badge-success">OK</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Screen 3: Receiving -->
+<div id="receiving" class="screen">
+    <div class="app-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo"><h2>WMS</h2><span>Warehouse Management System</span></div>
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CA;</span> Dashboard</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4E6;</span> Inventory</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Operations</div>
+                <a class="nav-item active"><span class="nav-icon">&#x1F4E5;</span> Receiving <span class="nav-badge">3</span></a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CD;</span> Putaway</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F6D2;</span> Picking</a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Receiving - PO-2026-0847</div>
+                    <div class="page-subtitle">Virginia | Expected: 24 pallets | Dock Door: D-03</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline">Print Labels</button>
+                    <button class="btn btn-success">Complete Receiving</button>
+                </div>
+            </div>
+
+            <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-label">Expected Lines</div>
+                    <div class="stat-value" style="font-size: 22px;">8</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Received</div>
+                    <div class="stat-value" style="font-size: 22px; color: var(--success);">6 / 8</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pallets</div>
+                    <div class="stat-value" style="font-size: 22px;">20 / 24</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Discrepancies</div>
+                    <div class="stat-value" style="font-size: 22px; color: var(--danger);">1</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Scan to Receive</div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div class="scan-area active">
+                            <div class="scan-icon">&#x1F4F7;</div>
+                            <div class="scan-text">Scan barcode or enter SKU manually</div>
+                            <div style="margin-top: 12px;">
+                                <input type="text" placeholder="Scan or type SKU..." style="padding: 10px 16px; border: 2px solid var(--primary-light); border-radius: 8px; font-size: 16px; width: 100%; text-align: center; outline: none;">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+                            <div>
+                                <label style="font-size: 12px; color: var(--gray-500); display: block; margin-bottom: 4px;">Quantity</label>
+                                <input type="number" value="240" style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; width: 100%; font-size: 14px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--gray-500); display: block; margin-bottom: 4px;">Lot Number</label>
+                                <input type="text" value="LOT-2026-0158" style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; width: 100%; font-size: 14px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--gray-500); display: block; margin-bottom: 4px;">Expiry Date</label>
+                                <input type="date" value="2027-03-15" style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; width: 100%; font-size: 14px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--gray-500); display: block; margin-bottom: 4px;">Condition</label>
+                                <select style="padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 6px; width: 100%; font-size: 14px;">
+                                    <option>Good</option>
+                                    <option>Damaged</option>
+                                    <option>Quarantine</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 16px; padding: 12px; font-size: 15px; justify-content: center;">Confirm Receipt</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">PO Lines</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>SKU</th><th>Product</th><th>Expected</th><th>Received</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-family: monospace; font-weight: 600;">VRG-CIG-001</td>
+                                <td>Classic Red 20s</td>
+                                <td>2,400</td>
+                                <td style="color: var(--success);">2,400</td>
+                                <td><span class="badge badge-success">Complete</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-family: monospace; font-weight: 600;">VRG-CIG-002</td>
+                                <td>Menthol 20s</td>
+                                <td>1,800</td>
+                                <td style="color: var(--success);">1,800</td>
+                                <td><span class="badge badge-success">Complete</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-family: monospace; font-weight: 600;">VRG-CIG-005</td>
+                                <td>Lights 20s</td>
+                                <td>1,200</td>
+                                <td style="color: var(--danger);">960</td>
+                                <td><span class="badge badge-danger">Short -240</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-family: monospace; font-weight: 600;">VRG-SNK-012</td>
+                                <td>Chips BBQ 150g</td>
+                                <td>960</td>
+                                <td style="color: var(--success);">960</td>
+                                <td><span class="badge badge-success">Complete</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-family: monospace; font-weight: 600;">VRG-SNK-015</td>
+                                <td>Chips Cheese 150g</td>
+                                <td>720</td>
+                                <td style="color: var(--success);">720</td>
+                                <td><span class="badge badge-success">Complete</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font-family: monospace; font-weight: 600;">VRG-BEV-003</td>
+                                <td>Energy Drink 330ml</td>
+                                <td>1,440</td>
+                                <td style="color: var(--success);">1,440</td>
+                                <td><span class="badge badge-success">Complete</span></td>
+                            </tr>
+                            <tr style="background: #fffbeb;">
+                                <td style="font-family: monospace; font-weight: 600;">VRG-BEV-007</td>
+                                <td>Juice Orange 500ml</td>
+                                <td>960</td>
+                                <td style="color: var(--gray-400);">-</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                            </tr>
+                            <tr style="background: #fffbeb;">
+                                <td style="font-family: monospace; font-weight: 600;">VRG-BEV-009</td>
+                                <td>Water 1L</td>
+                                <td>2,400</td>
+                                <td style="color: var(--gray-400);">-</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Screen 4: Warehouse Map -->
+<div id="warehouse-map" class="screen">
+    <div class="app-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo"><h2>WMS</h2><span>Warehouse Management System</span></div>
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CA;</span> Dashboard</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4E6;</span> Inventory</a>
+                <a class="nav-item active"><span class="nav-icon">&#x1F3E0;</span> Warehouse Map</a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Warehouse Map</div>
+                    <div class="page-subtitle">Visual overview of warehouse occupancy - Zone A</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline btn-sm">Zone A</button>
+                    <button class="btn btn-outline btn-sm">Zone B</button>
+                    <button class="btn btn-outline btn-sm">Zone C</button>
+                    <button class="btn btn-outline btn-sm">Staging</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Zone A - Aisle 1 through 8</div>
+                    <div style="font-size: 12px; color: var(--gray-500);">78% Occupied | 156/200 locations used</div>
+                </div>
+                <div style="padding: 8px 16px; background: var(--gray-50); font-size: 11px; color: var(--gray-500); display: flex; justify-content: space-between;">
+                    <span>Aisle 1</span><span>Aisle 2</span><span>Aisle 3</span><span>Aisle 4</span><span>Aisle 5</span><span>Aisle 6</span><span>Aisle 7</span><span>Aisle 8</span>
+                </div>
+                <div class="warehouse-map">
+                    <!-- Row 1 (Top shelf) -->
+                    <div class="map-cell full">A1-5</div>
+                    <div class="map-cell occupied">A2-5</div>
+                    <div class="map-cell occupied">A3-5</div>
+                    <div class="map-cell alert">A4-5</div>
+                    <div class="map-cell full">A5-5</div>
+                    <div class="map-cell occupied">A6-5</div>
+                    <div class="map-cell empty">A7-5</div>
+                    <div class="map-cell occupied">A8-5</div>
+                    <!-- Row 2 -->
+                    <div class="map-cell occupied">A1-4</div>
+                    <div class="map-cell full">A2-4</div>
+                    <div class="map-cell occupied">A3-4</div>
+                    <div class="map-cell occupied">A4-4</div>
+                    <div class="map-cell occupied">A5-4</div>
+                    <div class="map-cell full">A6-4</div>
+                    <div class="map-cell occupied">A7-4</div>
+                    <div class="map-cell empty">A8-4</div>
+                    <!-- Row 3 -->
+                    <div class="map-cell full">A1-3</div>
+                    <div class="map-cell occupied">A2-3</div>
+                    <div class="map-cell full">A3-3</div>
+                    <div class="map-cell occupied">A4-3</div>
+                    <div class="map-cell empty">A5-3</div>
+                    <div class="map-cell occupied">A6-3</div>
+                    <div class="map-cell full">A7-3</div>
+                    <div class="map-cell occupied">A8-3</div>
+                    <!-- Row 4 -->
+                    <div class="map-cell occupied">A1-2</div>
+                    <div class="map-cell occupied">A2-2</div>
+                    <div class="map-cell empty">A3-2</div>
+                    <div class="map-cell full">A4-2</div>
+                    <div class="map-cell occupied">A5-2</div>
+                    <div class="map-cell alert">A6-2</div>
+                    <div class="map-cell occupied">A7-2</div>
+                    <div class="map-cell full">A8-2</div>
+                    <!-- Row 5 (Ground level) -->
+                    <div class="map-cell full">A1-1</div>
+                    <div class="map-cell full">A2-1</div>
+                    <div class="map-cell occupied">A3-1</div>
+                    <div class="map-cell occupied">A4-1</div>
+                    <div class="map-cell full">A5-1</div>
+                    <div class="map-cell occupied">A6-1</div>
+                    <div class="map-cell full">A7-1</div>
+                    <div class="map-cell occupied">A8-1</div>
+                </div>
+                <div class="map-legend">
+                    <div class="legend-item"><div class="legend-color" style="background: #d1fae5; border: 1px solid #6ee7b7;"></div> Full (>90%)</div>
+                    <div class="legend-item"><div class="legend-color" style="background: #dbeafe; border: 1px solid #93c5fd;"></div> Occupied</div>
+                    <div class="legend-item"><div class="legend-color" style="background: var(--gray-100); border: 1px solid var(--gray-200);"></div> Empty</div>
+                    <div class="legend-item"><div class="legend-color" style="background: #fee2e2; border: 1px solid #fca5a5;"></div> Alert (Expiring/Issue)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Screen 5: Mobile Picking -->
+<div id="picking-mobile" class="screen">
+    <div style="background: var(--gray-100); min-height: calc(100vh - 60px); display: flex; flex-direction: column; align-items: center; padding: 24px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="font-size: 20px; color: var(--gray-800);">Mobile Picking Interface</h2>
+            <p style="color: var(--gray-500); font-size: 13px;">Tablet/Scanner view for warehouse floor staff</p>
+        </div>
+        <div class="mobile-frame">
+            <div class="mobile-header">
+                <span style="font-size: 14px;">&#x2190;</span>
+                <h3>Pick Task #PT-4521</h3>
+                <span style="font-size: 14px;">&#x2026;</span>
+            </div>
+            <div class="mobile-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-size: 12px; color: var(--gray-500);">Order: SO-2026-1208</div>
+                        <div style="font-size: 13px; font-weight: 600;">Virginia | 24 items</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: var(--gray-500);">Progress</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--primary);">18/24</div>
+                    </div>
+                </div>
+                <div class="progress-bar" style="margin-bottom: 20px;">
+                    <div class="progress-fill green" style="width: 75%;"></div>
+                </div>
+
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); font-weight: 600; margin-bottom: 8px;">CURRENT ITEM</div>
+
+                <div class="pick-card" style="border: 2px solid var(--primary); background: #eff6ff;">
+                    <div class="pick-card-header">
+                        <div>
+                            <div class="pick-sku">VRG-SNK-012</div>
+                            <div style="font-size: 13px; color: var(--gray-600); margin-top: 2px;">Virginia Chips BBQ 150g</div>
+                        </div>
+                        <div class="pick-qty">x48</div>
+                    </div>
+                    <div class="pick-location">&#x1F4CD; A-03-02-04</div>
+                    <div class="pick-detail">Lot: LOT-2026-0099 | Pallet: PLT-00798</div>
+                </div>
+
+                <div class="scan-area" style="padding: 20px; margin-bottom: 12px;">
+                    <div style="font-size: 28px; margin-bottom: 4px;">&#x1F4F7;</div>
+                    <div class="scan-text" style="font-size: 13px;">Scan location barcode to confirm</div>
+                </div>
+
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); font-weight: 600; margin-bottom: 8px;">NEXT ITEMS</div>
+
+                <div class="pick-card">
+                    <div class="pick-card-header">
+                        <div>
+                            <div class="pick-sku" style="font-size: 13px;">VRG-BEV-003</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">Energy Drink 330ml</div>
+                        </div>
+                        <div class="pick-qty" style="font-size: 18px; color: var(--gray-600);">x120</div>
+                    </div>
+                    <div class="pick-location" style="font-size: 11px;">&#x1F4CD; C-01-01-01</div>
+                </div>
+
+                <div class="pick-card">
+                    <div class="pick-card-header">
+                        <div>
+                            <div class="pick-sku" style="font-size: 13px;">VRG-BEV-007</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">Juice Orange 500ml</div>
+                        </div>
+                        <div class="pick-qty" style="font-size: 18px; color: var(--gray-600);">x72</div>
+                    </div>
+                    <div class="pick-location" style="font-size: 11px;">&#x1F4CD; C-02-03-01</div>
+                </div>
+            </div>
+            <div class="mobile-footer">
+                <div class="mobile-tab active">
+                    <span class="mobile-tab-icon">&#x1F4CB;</span>
+                    Tasks
+                </div>
+                <div class="mobile-tab">
+                    <span class="mobile-tab-icon">&#x1F4F7;</span>
+                    Scan
+                </div>
+                <div class="mobile-tab">
+                    <span class="mobile-tab-icon">&#x1F4E6;</span>
+                    Inventory
+                </div>
+                <div class="mobile-tab">
+                    <span class="mobile-tab-icon">&#x1F464;</span>
+                    Profile
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Screen 6: Clients -->
+<div id="clients" class="screen">
+    <div class="app-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo"><h2>WMS</h2><span>Warehouse Management System</span></div>
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a class="nav-item active"><span class="nav-icon">&#x1F465;</span> Clients</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CB;</span> Orders</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F9FE;</span> Billing</a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Client Management</div>
+                    <div class="page-subtitle">Manage your 3PL client accounts and contracts</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary">+ Add Client</button>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="card" style="padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 16px; font-weight: 700; color: var(--gray-900);">Virginia</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">Code: VRG | Since Jan 2024</div>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">PALLETS</div>
+                            <div style="font-size: 20px; font-weight: 700;">842</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">SKUs</div>
+                            <div style="font-size: 20px; font-weight: 700;">247</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">MONTHLY REV</div>
+                            <div style="font-size: 20px; font-weight: 700;">P 168K</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">LOCATIONS</div>
+                            <div style="font-size: 20px; font-weight: 700;">198</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill blue" style="width: 85%;"></div></div>
+                    <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">85% of contracted space used</div>
+                </div>
+
+                <div class="card" style="padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 16px; font-weight: 700; color: var(--gray-900);">ABC Corporation</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">Code: ABC | Since Mar 2024</div>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">PALLETS</div>
+                            <div style="font-size: 20px; font-weight: 700;">623</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">SKUs</div>
+                            <div style="font-size: 20px; font-weight: 700;">189</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">MONTHLY REV</div>
+                            <div style="font-size: 20px; font-weight: 700;">P 124K</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">LOCATIONS</div>
+                            <div style="font-size: 20px; font-weight: 700;">145</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill blue" style="width: 65%;"></div></div>
+                    <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">65% of contracted space used</div>
+                </div>
+
+                <div class="card" style="padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 16px; font-weight: 700; color: var(--gray-900);">DEF Industries</div>
+                            <div style="font-size: 12px; color: var(--gray-500);">Code: DEF | Since Jun 2024</div>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">PALLETS</div>
+                            <div style="font-size: 20px; font-weight: 700;">518</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">SKUs</div>
+                            <div style="font-size: 20px; font-weight: 700;">312</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">MONTHLY REV</div>
+                            <div style="font-size: 20px; font-weight: 700;">P 103K</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; color: var(--gray-400);">LOCATIONS</div>
+                            <div style="font-size: 20px; font-weight: 700;">120</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill blue" style="width: 72%;"></div></div>
+                    <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">72% of contracted space used</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Screen 7: Billing -->
+<div id="billing" class="screen">
+    <div class="app-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo"><h2>WMS</h2><span>Warehouse Management System</span></div>
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a class="nav-item"><span class="nav-icon">&#x1F465;</span> Clients</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CB;</span> Orders</a>
+                <a class="nav-item active"><span class="nav-icon">&#x1F9FE;</span> Billing</a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">3PL Billing</div>
+                    <div class="page-subtitle">February 2026 billing cycle</div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline">Generate All Invoices</button>
+                    <button class="btn btn-primary">+ Manual Charge</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Monthly Billing Summary</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Storage (Pallet-Days)</th>
+                            <th>Storage Charge</th>
+                            <th>Handling (Units)</th>
+                            <th>Handling Charge</th>
+                            <th>Additional</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight: 600;">Virginia</td>
+                            <td>23,576</td>
+                            <td>P 117,880.00</td>
+                            <td>12,480</td>
+                            <td>P 37,440.00</td>
+                            <td>P 12,500.00</td>
+                            <td style="font-weight: 700; font-size: 14px;">P 167,820.00</td>
+                            <td><span class="badge badge-warning">Draft</span></td>
+                            <td><button class="btn btn-outline btn-sm">Review</button></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">ABC Corporation</td>
+                            <td>17,444</td>
+                            <td>P 87,220.00</td>
+                            <td>8,960</td>
+                            <td>P 26,880.00</td>
+                            <td>P 10,000.00</td>
+                            <td style="font-weight: 700; font-size: 14px;">P 124,100.00</td>
+                            <td><span class="badge badge-success">Sent</span></td>
+                            <td><button class="btn btn-outline btn-sm">View</button></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">DEF Industries</td>
+                            <td>14,504</td>
+                            <td>P 72,520.00</td>
+                            <td>7,200</td>
+                            <td>P 21,600.00</td>
+                            <td>P 8,500.00</td>
+                            <td style="font-weight: 700; font-size: 14px;">P 102,620.00</td>
+                            <td><span class="badge badge-warning">Draft</span></td>
+                            <td><button class="btn btn-outline btn-sm">Review</button></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">GHI Limited</td>
+                            <td>11,536</td>
+                            <td>P 57,680.00</td>
+                            <td>5,400</td>
+                            <td>P 16,200.00</td>
+                            <td>P 5,000.00</td>
+                            <td style="font-weight: 700; font-size: 14px;">P 78,880.00</td>
+                            <td><span class="badge badge-info">Paid</span></td>
+                            <td><button class="btn btn-outline btn-sm">View</button></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: var(--gray-50);">
+                            <td style="font-weight: 700;">TOTAL</td>
+                            <td style="font-weight: 600;">67,060</td>
+                            <td style="font-weight: 600;">P 335,300.00</td>
+                            <td style="font-weight: 600;">34,040</td>
+                            <td style="font-weight: 600;">P 102,120.00</td>
+                            <td style="font-weight: 600;">P 36,000.00</td>
+                            <td style="font-weight: 700; font-size: 15px; color: var(--primary);">P 473,420.00</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Screen 8: Reports -->
+<div id="reports" class="screen">
+    <div class="app-layout">
+        <div class="sidebar">
+            <div class="sidebar-logo"><h2>WMS</h2><span>Warehouse Management System</span></div>
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a class="nav-item"><span class="nav-icon">&#x1F465;</span> Clients</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F4CB;</span> Orders</a>
+                <a class="nav-item"><span class="nav-icon">&#x1F9FE;</span> Billing</a>
+                <a class="nav-item active"><span class="nav-icon">&#x1F4C8;</span> Reports</a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Reports & Analytics</div>
+                    <div class="page-subtitle">Operational insights and KPIs</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green">&#x2713;</div>
+                    <div class="stat-label">Pick Accuracy</div>
+                    <div class="stat-value">99.7%</div>
+                    <div class="stat-change up">&#x2191; 0.2% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">&#x23F1;</div>
+                    <div class="stat-label">Avg Dock-to-Stock</div>
+                    <div class="stat-value">2.4h</div>
+                    <div class="stat-change up">&#x2191; Improved by 18 min</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">&#x1F4E6;</div>
+                    <div class="stat-label">Orders/Day (Avg)</div>
+                    <div class="stat-value">47</div>
+                    <div class="stat-change up">&#x2191; 12% growth</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red">&#x26A0;</div>
+                    <div class="stat-label">Inventory Variance</div>
+                    <div class="stat-value">0.3%</div>
+                    <div class="stat-change down">&#x2191; Target: <0.5%</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Throughput - Last 7 Days</div>
+                    </div>
+                    <div class="bar-chart" style="height: 180px;">
+                        <div class="bar" style="height: 120px; background: var(--primary);"><div class="bar-value">89</div><div class="bar-label">Mon</div></div>
+                        <div class="bar" style="height: 140px; background: var(--primary);"><div class="bar-value">104</div><div class="bar-label">Tue</div></div>
+                        <div class="bar" style="height: 100px; background: var(--primary);"><div class="bar-value">76</div><div class="bar-label">Wed</div></div>
+                        <div class="bar" style="height: 160px; background: var(--primary);"><div class="bar-value">118</div><div class="bar-label">Thu</div></div>
+                        <div class="bar" style="height: 130px; background: var(--primary);"><div class="bar-value">95</div><div class="bar-label">Fri</div></div>
+                        <div class="bar" style="height: 60px; background: var(--gray-300);"><div class="bar-value">42</div><div class="bar-label">Sat</div></div>
+                        <div class="bar" style="height: 20px; background: var(--gray-200);"><div class="bar-value">12</div><div class="bar-label">Sun</div></div>
+                    </div>
+                    <div style="text-align: center; padding: 8px; font-size: 11px; color: var(--gray-500); border-top: 1px solid var(--gray-200);">Orders shipped per day</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Staff Productivity</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>Staff</th><th>Role</th><th>Tasks</th><th>Accuracy</th><th>Avg Time</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-weight: 600;">Maria S.</td>
+                                <td>Picker</td>
+                                <td>48</td>
+                                <td><span class="badge badge-success">100%</span></td>
+                                <td>4.2 min</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Pedro R.</td>
+                                <td>Picker</td>
+                                <td>42</td>
+                                <td><span class="badge badge-success">99.5%</span></td>
+                                <td>4.8 min</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Juan D.</td>
+                                <td>Receiver</td>
+                                <td>12 POs</td>
+                                <td><span class="badge badge-success">100%</span></td>
+                                <td>28 min</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: 600;">Carlos T.</td>
+                                <td>Packer</td>
+                                <td>38</td>
+                                <td><span class="badge badge-warning">98.7%</span></td>
+                                <td>6.1 min</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        event.target.classList.add('active');
+    }
+</script>
+</body>
+</html>

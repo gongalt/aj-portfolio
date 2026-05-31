@@ -1,0 +1,3464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WMS Software - Warehouse Management System</title>
+<style>
+  /* ============================
+     CSS Variables & Reset
+  ============================ */
+  :root {
+    --primary: #1e40af;
+    --primary-light: #3b82f6;
+    --primary-dark: #1e3a8a;
+    --success: #059669;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --purple: #7c3aed;
+
+    --gray-50:  #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+
+    --nav-h: 48px;
+    --sidebar-expanded: 240px;
+    --sidebar-collapsed: 56px;
+    --sidebar-w: var(--sidebar-expanded);
+
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--gray-100);
+    color: var(--gray-800);
+    font-size: 13px;
+    line-height: 1.5;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* ============================
+     TOP NAV BAR
+  ============================ */
+  #top-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    background: var(--gray-900);
+    border-bottom: 1px solid var(--gray-700);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    z-index: 1000;
+    gap: 4px;
+    user-select: none;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 16px;
+    border-right: 1px solid var(--gray-700);
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  .nav-logo-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--primary);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-logo-text {
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.3px;
+  }
+
+  .nav-btn {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    background: transparent;
+    color: var(--gray-400);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-family: var(--font);
+  }
+
+  .nav-btn:hover {
+    background: var(--gray-800);
+    color: var(--gray-100);
+  }
+
+  .nav-btn.active {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .nav-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-badge {
+    background: var(--danger);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 10px;
+    margin-left: 4px;
+    line-height: 1.4;
+  }
+
+  .nav-user {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--gray-300);
+    font-size: 12px;
+  }
+
+  .nav-user:hover { background: var(--gray-800); }
+
+  .nav-avatar {
+    width: 26px;
+    height: 26px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* ============================
+     LAYOUT WRAPPER
+  ============================ */
+  #layout {
+    display: flex;
+    margin-top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
+    overflow: hidden;
+  }
+
+  /* ============================
+     SIDEBAR
+  ============================ */
+  #sidebar {
+    width: var(--sidebar-w);
+    background: var(--gray-900);
+    border-right: 1px solid var(--gray-800);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+    transition: width 0.2s ease;
+    position: relative;
+  }
+
+  #sidebar.collapsed {
+    width: var(--sidebar-collapsed);
+  }
+
+  .sidebar-toggle {
+    position: absolute;
+    top: 10px;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    background: var(--gray-800);
+    border: 1px solid var(--gray-700);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    color: var(--gray-400);
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .sidebar-toggle:hover { background: var(--gray-700); color: var(--gray-200); }
+
+  .sidebar-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    padding: 12px 0;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--gray-700); border-radius: 2px; }
+
+  .sidebar-group {
+    margin-bottom: 4px;
+  }
+
+  .sidebar-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gray-500);
+    padding: 6px 16px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.15s;
+  }
+
+  #sidebar.collapsed .sidebar-group-label {
+    opacity: 0;
+    padding: 2px 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 16px;
+    cursor: pointer;
+    color: var(--gray-400);
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .sidebar-item:hover {
+    background: var(--gray-800);
+    color: var(--gray-200);
+  }
+
+  .sidebar-item.active {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--primary-light);
+    border-left-color: var(--primary-light);
+  }
+
+  .sidebar-item svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+  }
+
+  .sidebar-item-text {
+    font-size: 13px;
+    font-weight: 500;
+    overflow: hidden;
+    transition: opacity 0.15s, width 0.15s;
+    width: 160px;
+  }
+
+  #sidebar.collapsed .sidebar-item-text {
+    opacity: 0;
+    width: 0;
+  }
+
+  .sidebar-badge {
+    margin-left: auto;
+    background: var(--warning);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    line-height: 1.4;
+    transition: opacity 0.15s;
+  }
+
+  #sidebar.collapsed .sidebar-badge {
+    opacity: 0;
+  }
+
+  .sidebar-badge.danger { background: var(--danger); }
+
+  /* Tooltip for collapsed state */
+  #sidebar.collapsed .sidebar-item::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 60px;
+    background: var(--gray-700);
+    color: var(--gray-100);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+  }
+
+  #sidebar.collapsed .sidebar-item:hover::after {
+    opacity: 1;
+  }
+
+  /* ============================
+     MAIN CONTENT AREA
+  ============================ */
+  #main {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--gray-100);
+  }
+
+  #main::-webkit-scrollbar { width: 6px; }
+  #main::-webkit-scrollbar-track { background: var(--gray-100); }
+  #main::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+
+  /* ============================
+     SCREEN PANELS
+  ============================ */
+  .screen {
+    display: none;
+    padding: 24px;
+    min-height: 100%;
+  }
+
+  .screen.active { display: block; }
+
+  /* ============================
+     COVER SCREEN
+  ============================ */
+  #screen-cover {
+    display: none;
+    min-height: 100%;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1e40af 70%, #2563eb 100%);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 48px 24px;
+  }
+
+  #screen-cover.active { display: flex; }
+
+  .cover-logo {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    backdrop-filter: blur(8px);
+  }
+
+  .cover-title {
+    font-size: 48px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1.5px;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .cover-subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 400;
+    margin-bottom: 48px;
+    letter-spacing: 0.3px;
+  }
+
+  .cover-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 5px 14px;
+    color: rgba(255,255,255,0.8);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 48px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .cover-features {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 56px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 900px;
+  }
+
+  .cover-feature {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 20px;
+    width: 160px;
+    text-align: center;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s;
+  }
+
+  .cover-feature:hover {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-2px);
+  }
+
+  .cover-feature-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(59,130,246,0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+
+  .cover-feature-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .cover-feature-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.4;
+  }
+
+  .cover-stats {
+    display: flex;
+    gap: 48px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 32px;
+    max-width: 700px;
+    width: 100%;
+  }
+
+  .cover-stat {
+    text-align: center;
+    flex: 1;
+  }
+
+  .cover-stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    display: block;
+  }
+
+  .cover-stat-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 2px;
+  }
+
+  .cover-version {
+    position: absolute;
+    bottom: 20px;
+    right: 24px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ============================
+     SCREEN HEADER
+  ============================ */
+  .screen-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .screen-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gray-900);
+    letter-spacing: -0.3px;
+  }
+
+  .screen-subtitle {
+    font-size: 12px;
+    color: var(--gray-500);
+    margin-top: 2px;
+  }
+
+  .screen-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ============================
+     BUTTONS
+  ============================ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: var(--font);
+    white-space: nowrap;
+  }
+
+  .btn svg { width: 14px; height: 14px; }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary-dark);
+  }
+
+  .btn-primary:hover { background: var(--primary-dark); }
+
+  .btn-secondary {
+    background: #fff;
+    color: var(--gray-700);
+    border-color: var(--gray-300);
+  }
+
+  .btn-secondary:hover { background: var(--gray-50); border-color: var(--gray-400); }
+
+  .btn-danger {
+    background: var(--danger);
+    color: #fff;
+    border-color: #b91c1c;
+  }
+
+  /* ============================
+     CARDS
+  ============================ */
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-800);
+  }
+
+  .card-body { padding: 16px 18px; }
+
+  /* ============================
+     KPI GRID
+  ============================ */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .kpi-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--primary-light);
+  }
+
+  .kpi-card.danger::before { background: var(--danger); }
+  .kpi-card.warning::before { background: var(--warning); }
+  .kpi-card.success::before { background: var(--success); }
+  .kpi-card.purple::before { background: var(--purple); }
+
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--gray-900);
+    letter-spacing: -0.5px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .kpi-value.danger { color: var(--danger); }
+
+  .kpi-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .kpi-trend.up { color: var(--success); }
+  .kpi-trend.down { color: var(--danger); }
+  .kpi-trend.neutral { color: var(--gray-500); }
+  .kpi-trend svg { width: 12px; height: 12px; }
+
+  .kpi-sub {
+    font-size: 10px;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+
+  /* ============================
+     TABLES
+  ============================ */
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  thead th {
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  thead th:hover { color: var(--gray-700); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--gray-100);
+    transition: background 0.1s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--gray-50); }
+
+  tbody td {
+    padding: 9px 12px;
+    color: var(--gray-700);
+    white-space: nowrap;
+  }
+
+  .mono { font-family: var(--mono); font-size: 11px; }
+
+  /* ============================
+     BADGES
+  ============================ */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge-success { background: #d1fae5; color: #065f46; }
+  .badge-warning { background: #fef3c7; color: #92400e; }
+  .badge-danger  { background: #fee2e2; color: #991b1b; }
+  .badge-orange  { background: #ffedd5; color: #9a3412; }
+  .badge-info    { background: #dbeafe; color: #1e40af; }
+  .badge-gray    { background: var(--gray-100); color: var(--gray-600); }
+  .badge-purple  { background: #ede9fe; color: #5b21b6; }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ============================
+     PROGRESS BAR
+  ============================ */
+  .progress-bar {
+    height: 6px;
+    background: var(--gray-200);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 80px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--primary-light);
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+
+  .progress-fill.danger { background: var(--danger); }
+  .progress-fill.warning { background: var(--warning); }
+  .progress-fill.success { background: var(--success); }
+
+  /* ============================
+     DASHBOARD GRID
+  ============================ */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .dashboard-grid.three-col {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .dashboard-full { grid-column: 1 / -1; }
+
+  /* ============================
+     CHART AREA
+  ============================ */
+  .chart-container {
+    padding: 12px 0 4px;
+    position: relative;
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .chart-y-axis {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 24px;
+    width: 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 2px;
+  }
+
+  .chart-y-label {
+    font-size: 10px;
+    color: var(--gray-400);
+    text-align: right;
+    padding-right: 6px;
+    line-height: 1;
+  }
+
+  .chart-bars {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 0 8px;
+    position: relative;
+    border-left: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+    height: 176px;
+  }
+
+  .chart-threshold-line {
+    position: absolute;
+    left: 0; right: 0;
+    border-top: 1.5px dashed var(--danger);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .chart-bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .chart-bar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    background: var(--primary-light);
+    min-height: 2px;
+    transition: all 0.3s;
+  }
+
+  .chart-bar.over-threshold { background: var(--danger); opacity: 0.85; }
+
+  .chart-bar-label {
+    font-size: 10px;
+    color: var(--gray-500);
+    text-align: center;
+    padding-top: 4px;
+  }
+
+  .chart-bar-val {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 2px;
+  }
+
+  /* ============================
+     INVENTORY SCREEN
+  ============================ */
+  .inv-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .inv-stat {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 12px 18px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .inv-stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .inv-stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--gray-900);
+    letter-spacing: -0.3px;
+  }
+
+  .inv-stat-value.danger { color: var(--danger); }
+  .inv-stat-sub {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .filter-bar select,
+  .filter-bar input {
+    border: 1px solid var(--gray-200);
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: var(--gray-700);
+    background: var(--gray-50);
+    outline: none;
+    font-family: var(--font);
+  }
+
+  .filter-bar select:focus,
+  .filter-bar input:focus {
+    border-color: var(--primary-light);
+    background: #fff;
+  }
+
+  .filter-bar input[type="text"] {
+    min-width: 200px;
+  }
+
+  .filter-sep {
+    width: 1px;
+    height: 20px;
+    background: var(--gray-200);
+    margin: 0 4px;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--gray-600);
+    background: #fff;
+    transition: all 0.15s;
+  }
+
+  .filter-pill.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  .filter-pill:hover:not(.active) { border-color: var(--primary-light); color: var(--primary); }
+
+  .tenant-selector {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tenant-selector select {
+    border: 1px solid var(--gray-200);
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    background: #dbeafe;
+    outline: none;
+    font-family: var(--font);
+    cursor: pointer;
+  }
+
+  /* ============================
+     PAGINATION
+  ============================ */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-top: 1px solid var(--gray-100);
+    background: var(--gray-50);
+  }
+
+  .pagination-info {
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+
+  .pagination-pages {
+    display: flex;
+    gap: 4px;
+  }
+
+  .page-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--gray-600);
+    font-family: var(--font);
+    transition: all 0.15s;
+  }
+
+  .page-btn:hover { border-color: var(--primary-light); color: var(--primary); }
+  .page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ============================
+     PLACEHOLDER SCREEN
+  ============================ */
+  .placeholder-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+    color: var(--gray-400);
+  }
+
+  .placeholder-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--gray-100);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+
+  .placeholder-screen h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 6px;
+  }
+
+  .placeholder-screen p {
+    font-size: 13px;
+    color: var(--gray-400);
+  }
+
+  /* ============================
+     ACTIVITY TABLE EXTRAS
+  ============================ */
+  .overdue-date { color: var(--danger); font-weight: 600; }
+
+  /* ============================
+     RESPONSIVE ADJUSTMENTS
+  ============================ */
+  @media (max-width: 1400px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 1100px) {
+    .dashboard-grid.three-col { grid-template-columns: 1fr; }
+    .dashboard-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================
+     TOP NAV BAR
+============================ -->
+<nav id="top-nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2"/>
+        <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+        <line x1="12" y1="12" x2="12" y2="16"/>
+        <line x1="10" y1="14" x2="14" y2="14"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">WMS</span>
+  </div>
+
+  <button class="nav-btn active" onclick="showScreen('cover')">Cover</button>
+  <button class="nav-btn" onclick="showScreen('dashboard')">Dashboard</button>
+  <button class="nav-btn" onclick="showScreen('inventory')">Inventory</button>
+  <button class="nav-btn" onclick="showScreen('orders')">Orders</button>
+  <button class="nav-btn" onclick="showScreen('receiving')">
+    Receiving<span class="nav-badge">3</span>
+  </button>
+  <button class="nav-btn" onclick="showScreen('map')">Map</button>
+  <button class="nav-btn" onclick="showScreen('picking')">
+    Picking<span class="nav-badge">12</span>
+  </button>
+  <button class="nav-btn" onclick="showScreen('clients')">Clients</button>
+  <button class="nav-btn" onclick="showScreen('billing')">Billing</button>
+  <button class="nav-btn" onclick="showScreen('reports')">Reports</button>
+  <button class="nav-btn" onclick="showScreen('settings')">Settings</button>
+
+  <div class="nav-right">
+    <div style="display:flex;align-items:center;gap:4px;color:var(--gray-400);font-size:11px;">
+      <svg viewBox="0 0 24 24" fill="none" width="13" height="13" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Feb 24, 2026 &nbsp;09:42
+    </div>
+    <div class="nav-user">
+      <div class="nav-avatar">AJ</div>
+      <span>Adrian Jenson</span>
+      <svg viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================
+     LAYOUT
+============================ -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
+      <svg id="sidebar-toggle-icon" viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+
+    <div class="sidebar-scroll">
+
+      <!-- Group: Overview -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-label">Overview</div>
+
+        <div class="sidebar-item active" data-tooltip="Dashboard" onclick="showScreen('dashboard')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          <span class="sidebar-item-text">Dashboard</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Inventory" onclick="showScreen('inventory')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/>
+            <polyline points="3 8 12 13 21 8"/>
+            <line x1="12" y1="13" x2="12" y2="21"/>
+          </svg>
+          <span class="sidebar-item-text">Inventory</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Warehouse Map" onclick="showScreen('map')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/>
+            <line x1="9" y1="3" x2="9" y2="18"/>
+            <line x1="15" y1="6" x2="15" y2="21"/>
+          </svg>
+          <span class="sidebar-item-text">Warehouse Map</span>
+        </div>
+      </div>
+
+      <!-- Group: Operations -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-label">Operations</div>
+
+        <div class="sidebar-item" data-tooltip="Receiving" onclick="showScreen('receiving')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span class="sidebar-item-text">Receiving</span>
+          <span class="sidebar-badge">3</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Putaway" onclick="showScreen('putaway')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <span class="sidebar-item-text">Putaway</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Picking" onclick="showScreen('picking')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 12l2 2 4-4"/>
+            <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/>
+          </svg>
+          <span class="sidebar-item-text">Picking</span>
+          <span class="sidebar-badge danger">12</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Packing" onclick="showScreen('packing')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span class="sidebar-item-text">Packing</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Shipping" onclick="showScreen('shipping')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13" rx="1"/>
+            <path d="M16 8h4l3 3v5h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+          <span class="sidebar-item-text">Shipping</span>
+        </div>
+      </div>
+
+      <!-- Group: Management -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-label">Management</div>
+
+        <div class="sidebar-item" data-tooltip="Clients" onclick="showScreen('clients')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+            <path d="M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+          <span class="sidebar-item-text">Clients</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Orders" onclick="showScreen('orders')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span class="sidebar-item-text">Orders</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Billing" onclick="showScreen('billing')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2"/>
+            <line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+          <span class="sidebar-item-text">Billing</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Reports" onclick="showScreen('reports')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          <span class="sidebar-item-text">Reports</span>
+        </div>
+      </div>
+
+      <!-- Group: System -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-label">System</div>
+
+        <div class="sidebar-item" data-tooltip="Settings" onclick="showScreen('settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 19.07l-1.41-1.41"/>
+          </svg>
+          <span class="sidebar-item-text">Settings</span>
+        </div>
+
+        <div class="sidebar-item" data-tooltip="Users" onclick="showScreen('users')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span class="sidebar-item-text">Users</span>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="main">
+
+    <!-- ================================================
+         COVER SCREEN
+    ================================================ -->
+    <div id="screen-cover" class="screen active">
+      <div class="cover-logo">
+        <svg viewBox="0 0 24 24" fill="none" width="40" height="40" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/>
+          <polyline points="3 8 12 13 21 8"/>
+          <line x1="12" y1="13" x2="12" y2="21"/>
+        </svg>
+      </div>
+
+      <div class="cover-badge">
+        <svg viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="rgba(255,255,255,0.8)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Version 2.0 — 2026 Release
+      </div>
+
+      <h1 class="cover-title">WMS Software</h1>
+      <p class="cover-subtitle">3PL Warehouse Management System</p>
+
+      <div class="cover-features">
+
+        <div class="cover-feature">
+          <div class="cover-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" width="22" height="22" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </div>
+          <div class="cover-feature-title">Real-Time Dashboard</div>
+          <div class="cover-feature-desc">Live KPIs and warehouse activity monitoring</div>
+        </div>
+
+        <div class="cover-feature">
+          <div class="cover-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" width="22" height="22" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/>
+              <polyline points="3 8 12 13 21 8"/>
+              <line x1="12" y1="13" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="cover-feature-title">Inventory Control</div>
+          <div class="cover-feature-desc">Multi-tenant lot tracking with expiry management</div>
+        </div>
+
+        <div class="cover-feature">
+          <div class="cover-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" width="22" height="22" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12l2 2 4-4"/>
+              <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/>
+            </svg>
+          </div>
+          <div class="cover-feature-title">Pick &amp; Pack</div>
+          <div class="cover-feature-desc">Guided picking with zone and priority routing</div>
+        </div>
+
+        <div class="cover-feature">
+          <div class="cover-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" width="22" height="22" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+          </div>
+          <div class="cover-feature-title">3PL Billing</div>
+          <div class="cover-feature-desc">Automated storage and handling fee calculation</div>
+        </div>
+
+        <div class="cover-feature">
+          <div class="cover-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" width="22" height="22" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </div>
+          <div class="cover-feature-title">Analytics &amp; Reports</div>
+          <div class="cover-feature-desc">Throughput, accuracy, and utilization metrics</div>
+        </div>
+
+      </div>
+
+      <div class="cover-stats">
+        <div class="cover-stat">
+          <span class="cover-stat-value">1,247</span>
+          <div class="cover-stat-label">Active SKUs</div>
+        </div>
+        <div class="cover-stat">
+          <span class="cover-stat-value">800</span>
+          <div class="cover-stat-label">Storage Locations</div>
+        </div>
+        <div class="cover-stat">
+          <span class="cover-stat-value">18</span>
+          <div class="cover-stat-label">Active Clients</div>
+        </div>
+        <div class="cover-stat">
+          <span class="cover-stat-value">99.4%</span>
+          <div class="cover-stat-label">Pick Accuracy</div>
+        </div>
+        <div class="cover-stat">
+          <span class="cover-stat-value">24/7</span>
+          <div class="cover-stat-label">Uptime SLA</div>
+        </div>
+      </div>
+
+      <div class="cover-version">WMS Software v2.0 &mdash; Confidential Mockup</div>
+    </div>
+
+    <!-- ================================================
+         DASHBOARD SCREEN
+    ================================================ -->
+    <div id="screen-dashboard" class="screen">
+
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Operations Dashboard</div>
+          <div class="screen-subtitle">Live warehouse activity &mdash; Updated 09:42 AM &mdash; All Tenants</div>
+        </div>
+        <div class="screen-actions">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            All Warehouses
+          </button>
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Today
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+
+        <div class="kpi-card">
+          <div class="kpi-label">Total SKU Count</div>
+          <div class="kpi-value">1,247</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            +5.2% vs last week
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">Active Shipments</div>
+          <div class="kpi-value">23</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            +12% in transit
+          </div>
+        </div>
+
+        <div class="kpi-card danger">
+          <div class="kpi-label">Low Stock Alerts</div>
+          <div class="kpi-value danger">14</div>
+          <div class="kpi-trend down">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            -3 from last week
+          </div>
+        </div>
+
+        <div class="kpi-card warning">
+          <div class="kpi-label">Orders to Process</div>
+          <div class="kpi-value">43</div>
+          <div class="kpi-trend down">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            <span style="color:var(--danger)">8 overdue</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">Storage Utilization</div>
+          <div class="kpi-value">78%</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            +2.1% this week
+          </div>
+          <div class="kpi-sub">623 / 800 locations</div>
+        </div>
+
+        <div class="kpi-card success">
+          <div class="kpi-label">Orders Processed Today</div>
+          <div class="kpi-value">89</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            +15% vs yesterday
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Dashboard lower grid -->
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:16px;margin-bottom:16px;">
+
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent Activity</span>
+            <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;">View All</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date / Time</th>
+                  <th>Action</th>
+                  <th>User</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono">02/24 09:38</td>
+                  <td><span class="badge badge-info">Received</span></td>
+                  <td>M. Torres</td>
+                  <td>PO-2024-0892 &mdash; 48 cartons from Sysco Virginia</td>
+                  <td><span class="badge badge-success"><span class="badge-dot"></span>Complete</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">02/24 09:21</td>
+                  <td><span class="badge badge-warning">Pick Task</span></td>
+                  <td>D. Nguyen</td>
+                  <td>ORD-8821 &mdash; 12 items, Client: Old Dominion Foods</td>
+                  <td><span class="badge badge-warning"><span class="badge-dot"></span>In Progress</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">02/24 09:14</td>
+                  <td><span class="badge badge-gray">Transfer</span></td>
+                  <td>R. Patel</td>
+                  <td>LOC A-03-02-01 to A-03-04-02 &mdash; SKU VRG-1042</td>
+                  <td><span class="badge badge-success"><span class="badge-dot"></span>Complete</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">02/24 08:58</td>
+                  <td><span class="badge badge-danger">Alert</span></td>
+                  <td>System</td>
+                  <td>Low stock threshold reached &mdash; SKU BRK-0057 (Qty: 12)</td>
+                  <td><span class="badge badge-orange"><span class="badge-dot"></span>Action Req.</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">02/24 08:45</td>
+                  <td><span class="badge badge-info">Shipped</span></td>
+                  <td>K. Williams</td>
+                  <td>ORD-8810 &mdash; UPS Ground, 4 packages, TRK# 1Z9X4...</td>
+                  <td><span class="badge badge-success"><span class="badge-dot"></span>Shipped</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">02/24 08:30</td>
+                  <td><span class="badge badge-purple">Putaway</span></td>
+                  <td>M. Torres</td>
+                  <td>24 units placed &mdash; A-02-01-04 &mdash; SKU NVA-2210</td>
+                  <td><span class="badge badge-success"><span class="badge-dot"></span>Complete</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">02/24 08:12</td>
+                  <td><span class="badge badge-warning">Pick Task</span></td>
+                  <td>C. Johnson</td>
+                  <td>ORD-8815 &mdash; 7 items, Client: Blue Ridge Distributors</td>
+                  <td><span class="badge badge-success"><span class="badge-dot"></span>Complete</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">02/24 07:55</td>
+                  <td><span class="badge badge-gray">Cycle Count</span></td>
+                  <td>A. Davis</td>
+                  <td>Zone B audit &mdash; 142 locations verified, 2 discrepancies</td>
+                  <td><span class="badge badge-orange"><span class="badge-dot"></span>Review</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">02/24 07:42</td>
+                  <td><span class="badge badge-info">Received</span></td>
+                  <td>R. Patel</td>
+                  <td>PO-2024-0891 &mdash; 12 pallets, Shenandoah Valley Farms</td>
+                  <td><span class="badge badge-warning"><span class="badge-dot"></span>Putaway Pending</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">02/24 07:15</td>
+                  <td><span class="badge badge-gray">Login</span></td>
+                  <td>A. Jenson</td>
+                  <td>Admin login &mdash; Session started from 192.168.1.44</td>
+                  <td><span class="badge badge-success"><span class="badge-dot"></span>Active</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Warehouse Capacity Chart -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Warehouse Capacity — Weekly</span>
+            <span style="font-size:10px;color:var(--gray-400);">% Utilization</span>
+          </div>
+          <div class="card-body" style="padding-top:12px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;font-size:11px;">
+              <span style="display:flex;align-items:center;gap:4px;color:var(--gray-500);">
+                <span style="display:inline-block;width:12px;height:3px;background:var(--primary-light);border-radius:2px;"></span>
+                Utilized
+              </span>
+              <span style="display:flex;align-items:center;gap:4px;color:var(--danger);">
+                <span style="display:inline-block;width:12px;height:3px;background:var(--danger);border-radius:2px;"></span>
+                Over 90%
+              </span>
+              <span style="display:flex;align-items:center;gap:4px;color:var(--gray-400);">
+                <span style="display:inline-block;width:20px;border-top:1.5px dashed var(--danger);"></span>
+                90% Threshold
+              </span>
+            </div>
+
+            <div style="display:flex;padding-left:36px;height:180px;position:relative;">
+              <!-- Y Axis -->
+              <div style="position:absolute;left:0;top:0;bottom:22px;width:36px;display:flex;flex-direction:column;justify-content:space-between;">
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">100%</span>
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">75%</span>
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">50%</span>
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">25%</span>
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">0%</span>
+              </div>
+              <!-- Bar Chart -->
+              <div style="flex:1;border-left:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);display:flex;align-items:flex-end;gap:6px;padding:0 8px;position:relative;height:158px;">
+                <!-- 90% threshold line at 90% from bottom = 90% of 158px = ~142px from bottom -->
+                <div style="position:absolute;left:0;right:0;bottom:142px;border-top:1.5px dashed var(--danger);opacity:0.6;"></div>
+
+                <!-- Mon 72% -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">72%</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:114px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);margin-top:4px;">Mon</span>
+                </div>
+                <!-- Tue 68% -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">68%</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:107px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);margin-top:4px;">Tue</span>
+                </div>
+                <!-- Wed 81% -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">81%</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:128px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);margin-top:4px;">Wed</span>
+                </div>
+                <!-- Thu 94% - over threshold -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:700;color:var(--danger);margin-bottom:2px;">94%</span>
+                  <div style="width:100%;background:var(--danger);border-radius:3px 3px 0 0;height:149px;opacity:0.85;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);margin-top:4px;">Thu</span>
+                </div>
+                <!-- Fri 91% - over threshold -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:700;color:var(--danger);margin-bottom:2px;">91%</span>
+                  <div style="width:100%;background:var(--danger);border-radius:3px 3px 0 0;height:144px;opacity:0.85;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);margin-top:4px;">Fri</span>
+                </div>
+                <!-- Sat 78% -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">78%</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:123px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);margin-top:4px;">Sat</span>
+                </div>
+                <!-- Sun 63% -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">63%</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:100px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);margin-top:4px;">Sun</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Active Pick Tasks -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Active Pick Tasks</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="badge badge-danger">12 Active</span>
+            <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;">Assign Task</button>
+            <button class="btn btn-primary" style="padding:4px 10px;font-size:11px;">New Pick Wave</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Priority</th>
+                <th>Order</th>
+                <th>Client</th>
+                <th>Items</th>
+                <th>Picker</th>
+                <th>Zone</th>
+                <th>Ship By</th>
+                <th>Progress</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-danger">Rush</span></td>
+                <td class="mono">ORD-8821</td>
+                <td>Old Dominion Foods</td>
+                <td>12</td>
+                <td>D. Nguyen</td>
+                <td><span class="badge badge-gray">Zone A</span></td>
+                <td class="mono overdue-date">02/24 10:00</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="progress-bar"><div class="progress-fill warning" style="width:58%;"></div></div>
+                    <span style="font-size:11px;color:var(--gray-500);">7/12</span>
+                  </div>
+                </td>
+                <td><span class="badge badge-warning"><span class="badge-dot"></span>In Progress</span></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-danger">Rush</span></td>
+                <td class="mono">ORD-8819</td>
+                <td>Blue Ridge Distributors</td>
+                <td>6</td>
+                <td>K. Williams</td>
+                <td><span class="badge badge-gray">Zone B</span></td>
+                <td class="mono overdue-date">02/24 09:30</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="progress-bar"><div class="progress-fill danger" style="width:33%;"></div></div>
+                    <span style="font-size:11px;color:var(--gray-500);">2/6</span>
+                  </div>
+                </td>
+                <td><span class="badge badge-danger"><span class="badge-dot"></span>Overdue</span></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-orange">High</span></td>
+                <td class="mono">ORD-8820</td>
+                <td>Shenandoah Valley Farms</td>
+                <td>18</td>
+                <td>C. Johnson</td>
+                <td><span class="badge badge-gray">Zone C</span></td>
+                <td class="mono">02/24 14:00</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="progress-bar"><div class="progress-fill" style="width:72%;"></div></div>
+                    <span style="font-size:11px;color:var(--gray-500);">13/18</span>
+                  </div>
+                </td>
+                <td><span class="badge badge-warning"><span class="badge-dot"></span>In Progress</span></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-orange">High</span></td>
+                <td class="mono">ORD-8817</td>
+                <td>Potomac Grocery Co.</td>
+                <td>9</td>
+                <td>R. Patel</td>
+                <td><span class="badge badge-gray">Zone A</span></td>
+                <td class="mono">02/24 15:30</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="progress-bar"><div class="progress-fill success" style="width:100%;"></div></div>
+                    <span style="font-size:11px;color:var(--gray-500);">9/9</span>
+                  </div>
+                </td>
+                <td><span class="badge badge-info"><span class="badge-dot"></span>Packing</span></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-gray">Normal</span></td>
+                <td class="mono">ORD-8816</td>
+                <td>Tidewater Food Service</td>
+                <td>24</td>
+                <td>M. Torres</td>
+                <td><span class="badge badge-gray">Zone D</span></td>
+                <td class="mono">02/24 17:00</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="progress-bar"><div class="progress-fill" style="width:0%;"></div></div>
+                    <span style="font-size:11px;color:var(--gray-500);">0/24</span>
+                  </div>
+                </td>
+                <td><span class="badge badge-gray"><span class="badge-dot"></span>Queued</span></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-gray">Normal</span></td>
+                <td class="mono">ORD-8814</td>
+                <td>Richmond Fresh Market</td>
+                <td>31</td>
+                <td>A. Davis</td>
+                <td><span class="badge badge-gray">Zone B</span></td>
+                <td class="mono">02/24 17:00</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <div class="progress-bar"><div class="progress-fill" style="width:45%;"></div></div>
+                    <span style="font-size:11px;color:var(--gray-500);">14/31</span>
+                  </div>
+                </td>
+                <td><span class="badge badge-warning"><span class="badge-dot"></span>In Progress</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================================================
+         INVENTORY SCREEN
+    ================================================ -->
+    <div id="screen-inventory" class="screen">
+
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Inventory Management</div>
+          <div class="screen-subtitle">Live stock levels across all locations and tenants</div>
+        </div>
+        <div class="screen-actions">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+            Columns
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Stock
+          </button>
+        </div>
+      </div>
+
+      <!-- Inventory Stats Row -->
+      <div class="inv-stats">
+        <div class="inv-stat">
+          <div class="inv-stat-label">Total SKUs</div>
+          <div class="inv-stat-value">1,247</div>
+          <div class="inv-stat-sub">across all clients</div>
+        </div>
+        <div class="inv-stat">
+          <div class="inv-stat-label">Total Units</div>
+          <div class="inv-stat-value">48,392</div>
+          <div class="inv-stat-sub">on hand</div>
+        </div>
+        <div class="inv-stat">
+          <div class="inv-stat-label">Pallets</div>
+          <div class="inv-stat-value">842</div>
+          <div class="inv-stat-sub">active pallets</div>
+        </div>
+        <div class="inv-stat">
+          <div class="inv-stat-label">Locations Used</div>
+          <div class="inv-stat-value">623 <span style="font-size:14px;font-weight:500;color:var(--gray-400);">/ 800</span></div>
+          <div class="inv-stat-sub">
+            <div style="margin-top:4px;"><div class="progress-bar" style="height:5px;"><div class="progress-fill warning" style="width:77.9%;"></div></div></div>
+          </div>
+        </div>
+        <div class="inv-stat" style="border-color:var(--danger);border-width:1px;">
+          <div class="inv-stat-label" style="color:var(--danger);">Low Stock Alerts</div>
+          <div class="inv-stat-value danger">14</div>
+          <div class="inv-stat-sub">require replenishment</div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <select>
+          <option>All Categories</option>
+          <option>Dry Goods</option>
+          <option>Refrigerated</option>
+          <option>Frozen</option>
+          <option>Produce</option>
+          <option>Beverages</option>
+          <option>Cleaning Supplies</option>
+        </select>
+        <select>
+          <option>All Zones</option>
+          <option>Zone A &mdash; Dry Storage</option>
+          <option>Zone B &mdash; Cold Storage</option>
+          <option>Zone C &mdash; Freezer</option>
+          <option>Zone D &mdash; Overflow</option>
+          <option>Zone E &mdash; Quarantine</option>
+        </select>
+        <div class="filter-sep"></div>
+        <span class="filter-label">Status:</span>
+        <span class="filter-pill active">All</span>
+        <span class="filter-pill">In Stock</span>
+        <span class="filter-pill">Low Stock</span>
+        <span class="filter-pill">Expiring</span>
+        <span class="filter-pill">Quarantine</span>
+        <div class="filter-sep"></div>
+        <input type="text" placeholder="Search SKU, product name, lot..." style="min-width:220px;" />
+        <div class="tenant-selector">
+          <svg viewBox="0 0 24 24" fill="none" width="13" height="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          Client:
+          <select>
+            <option>All Clients</option>
+            <option>Old Dominion Foods</option>
+            <option>Blue Ridge Distributors</option>
+            <option>Shenandoah Valley Farms</option>
+            <option>Tidewater Food Service</option>
+            <option>Richmond Fresh Market</option>
+            <option>Potomac Grocery Co.</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Inventory Table -->
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Product Name</th>
+                <th>Location</th>
+                <th>Lot #</th>
+                <th>Expiry</th>
+                <th style="text-align:right;">On Hand</th>
+                <th style="text-align:right;">Allocated</th>
+                <th style="text-align:right;">Available</th>
+                <th>Pallet ID</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <!-- Row 1 - In Stock -->
+              <tr>
+                <td class="mono">VRG-1042</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Virginia Ham Sliced 6oz</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Old Dominion Foods &mdash; Dry Goods</div>
+                </td>
+                <td class="mono">A-01-03-02</td>
+                <td class="mono">LOT-240189</td>
+                <td class="mono">08/15/2026</td>
+                <td class="mono" style="text-align:right;">240</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">36</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--success);">204</td>
+                <td class="mono">PLT-00441</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span>In Stock</span></td>
+              </tr>
+
+              <!-- Row 2 - Low Stock -->
+              <tr>
+                <td class="mono">BRK-0057</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Blue Ridge Apple Cider 1gal</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Blue Ridge Distributors &mdash; Beverages</div>
+                </td>
+                <td class="mono">B-04-01-01</td>
+                <td class="mono">LOT-240204</td>
+                <td class="mono">03/01/2026</td>
+                <td class="mono" style="text-align:right;">12</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">8</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--warning);">4</td>
+                <td class="mono">PLT-00398</td>
+                <td><span class="badge badge-warning"><span class="badge-dot"></span>Low Stock</span></td>
+              </tr>
+
+              <!-- Row 3 - Expiring Soon -->
+              <tr>
+                <td class="mono">SVF-2210</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Shenandoah Organic Eggs 12ct</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Shenandoah Valley Farms &mdash; Refrigerated</div>
+                </td>
+                <td class="mono">B-02-05-03</td>
+                <td class="mono">LOT-240216</td>
+                <td class="mono" style="color:var(--warning);font-weight:600;">03/05/2026</td>
+                <td class="mono" style="text-align:right;">144</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">48</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--gray-800);">96</td>
+                <td class="mono">PLT-00412</td>
+                <td><span class="badge badge-orange"><span class="badge-dot"></span>Expiring Soon</span></td>
+              </tr>
+
+              <!-- Row 4 - In Stock -->
+              <tr>
+                <td class="mono">TFS-3381</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Tidewater Crab Cakes Frozen 4pk</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Tidewater Food Service &mdash; Frozen</div>
+                </td>
+                <td class="mono">C-01-02-04</td>
+                <td class="mono">LOT-240178</td>
+                <td class="mono">12/01/2026</td>
+                <td class="mono" style="text-align:right;">480</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">120</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--success);">360</td>
+                <td class="mono">PLT-00387</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span>In Stock</span></td>
+              </tr>
+
+              <!-- Row 5 - Out of Stock -->
+              <tr>
+                <td class="mono">RFM-0092</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Richmond Sourdough Loaf 24oz</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Richmond Fresh Market &mdash; Bakery</div>
+                </td>
+                <td class="mono">A-03-07-01</td>
+                <td class="mono">LOT-240201</td>
+                <td class="mono">02/28/2026</td>
+                <td class="mono" style="text-align:right;">0</td>
+                <td class="mono" style="text-align:right;">0</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--danger);">0</td>
+                <td class="mono" style="color:var(--gray-400);">&mdash;</td>
+                <td><span class="badge badge-danger"><span class="badge-dot"></span>Out of Stock</span></td>
+              </tr>
+
+              <!-- Row 6 - Quarantine -->
+              <tr>
+                <td class="mono">PGC-1155</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Potomac Spring Water 24pk</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Potomac Grocery Co. &mdash; Beverages</div>
+                </td>
+                <td class="mono">E-01-01-02</td>
+                <td class="mono">LOT-240195</td>
+                <td class="mono">06/30/2027</td>
+                <td class="mono" style="text-align:right;">72</td>
+                <td class="mono" style="text-align:right;">0</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--purple);">72</td>
+                <td class="mono">PLT-00421</td>
+                <td><span class="badge badge-purple"><span class="badge-dot"></span>Quarantine</span></td>
+              </tr>
+
+              <!-- Row 7 - In Stock -->
+              <tr>
+                <td class="mono">NVA-4420</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Northern VA Honey Raw 16oz</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Old Dominion Foods &mdash; Specialty</div>
+                </td>
+                <td class="mono">A-02-04-03</td>
+                <td class="mono">LOT-240211</td>
+                <td class="mono">01/01/2028</td>
+                <td class="mono" style="text-align:right;">360</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">60</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--success);">300</td>
+                <td class="mono">PLT-00456</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span>In Stock</span></td>
+              </tr>
+
+              <!-- Row 8 - Low Stock -->
+              <tr>
+                <td class="mono">SVF-0831</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Shenandoah Grass-Fed Butter 1lb</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Shenandoah Valley Farms &mdash; Dairy</div>
+                </td>
+                <td class="mono">B-03-02-01</td>
+                <td class="mono">LOT-240219</td>
+                <td class="mono">04/10/2026</td>
+                <td class="mono" style="text-align:right;">18</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">12</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--warning);">6</td>
+                <td class="mono">PLT-00462</td>
+                <td><span class="badge badge-warning"><span class="badge-dot"></span>Low Stock</span></td>
+              </tr>
+
+              <!-- Row 9 - In Stock -->
+              <tr>
+                <td class="mono">TFS-7700</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Chesapeake Bay Seasoning 8oz</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Tidewater Food Service &mdash; Dry Goods</div>
+                </td>
+                <td class="mono">A-04-01-02</td>
+                <td class="mono">LOT-240188</td>
+                <td class="mono">09/22/2026</td>
+                <td class="mono" style="text-align:right;">576</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">144</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--success);">432</td>
+                <td class="mono">PLT-00371</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span>In Stock</span></td>
+              </tr>
+
+              <!-- Row 10 - Expiring Soon -->
+              <tr>
+                <td class="mono">BRK-2204</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Blue Ridge Fresh Milk 1gal</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Blue Ridge Distributors &mdash; Dairy</div>
+                </td>
+                <td class="mono">B-01-06-02</td>
+                <td class="mono">LOT-240222</td>
+                <td class="mono" style="color:var(--danger);font-weight:600;">02/28/2026</td>
+                <td class="mono" style="text-align:right;">96</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">24</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--gray-800);">72</td>
+                <td class="mono">PLT-00470</td>
+                <td><span class="badge badge-orange"><span class="badge-dot"></span>Expiring Soon</span></td>
+              </tr>
+
+              <!-- Row 11 -->
+              <tr>
+                <td class="mono">RFM-5510</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Richmond Craft Pasta 500g</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Richmond Fresh Market &mdash; Dry Goods</div>
+                </td>
+                <td class="mono">A-05-03-01</td>
+                <td class="mono">LOT-240193</td>
+                <td class="mono">11/30/2027</td>
+                <td class="mono" style="text-align:right;">1,200</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">300</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--success);">900</td>
+                <td class="mono">PLT-00355</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span>In Stock</span></td>
+              </tr>
+
+              <!-- Row 12 -->
+              <tr>
+                <td class="mono">PGC-3390</td>
+                <td>
+                  <div style="font-weight:500;color:var(--gray-800);">Potomac Valley Granola 2lb</div>
+                  <div style="font-size:11px;color:var(--gray-400);">Potomac Grocery Co. &mdash; Dry Goods</div>
+                </td>
+                <td class="mono">A-06-02-04</td>
+                <td class="mono">LOT-240207</td>
+                <td class="mono">07/14/2026</td>
+                <td class="mono" style="text-align:right;">288</td>
+                <td class="mono" style="text-align:right;color:var(--warning);">72</td>
+                <td class="mono" style="text-align:right;font-weight:600;color:var(--success);">216</td>
+                <td class="mono">PLT-00439</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span>In Stock</span></td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div class="pagination">
+          <div class="pagination-info">Showing 1-15 of 247 items</div>
+          <div class="pagination-pages">
+            <button class="page-btn" disabled>
+              <svg viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn" style="pointer-events:none;border:none;background:transparent;">...</button>
+            <button class="page-btn">17</button>
+            <button class="page-btn">
+              <svg viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================================================
+         PLACEHOLDER SCREENS
+    ================================================ -->
+
+    <div id="screen-orders" class="screen">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Order Fulfillment</div>
+          <div class="screen-subtitle">Manage and track outbound sales orders</div>
+        </div>
+        <div class="screen-actions">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Order
+          </button>
+        </div>
+      </div>
+
+      <!-- Orders Split Layout -->
+      <div style="display:flex;gap:16px;height:calc(100vh - 180px);min-height:540px;">
+
+        <!-- LEFT: Order List (30%) -->
+        <div class="card" style="width:30%;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;">
+          <div class="card-header">
+            <div class="card-title">Sales Orders</div>
+            <span class="badge badge-gray">6 orders</span>
+          </div>
+          <div style="padding:10px 12px;border-bottom:1px solid var(--gray-100);">
+            <div style="display:flex;align-items:center;gap:6px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:6px 10px;">
+              <svg viewBox="0 0 24 24" fill="none" width="13" height="13" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input placeholder="Search orders..." style="border:none;outline:none;background:transparent;font-size:12px;width:100%;font-family:var(--font);color:var(--gray-700);">
+            </div>
+          </div>
+          <div style="overflow-y:auto;flex:1;">
+
+            <!-- Order item - SELECTED -->
+            <div style="padding:12px 14px;border-left:3px solid var(--primary);background:#f0f7ff;cursor:pointer;border-bottom:1px solid var(--gray-100);">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:12px;color:var(--gray-900);font-family:var(--mono);">SO-2026-1208</span>
+                <span class="badge badge-info">In Progress</span>
+              </div>
+              <div style="font-size:12px;color:var(--gray-600);margin-bottom:4px;">Virginia &mdash; 24 items</div>
+              <div style="font-size:11px;color:var(--danger);font-weight:600;">Ship By: Feb 24 &mdash; Overdue</div>
+            </div>
+
+            <!-- Order item -->
+            <div style="padding:12px 14px;border-left:3px solid transparent;cursor:pointer;border-bottom:1px solid var(--gray-100);transition:background 0.1s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background=''">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:12px;color:var(--gray-900);font-family:var(--mono);">SO-2026-1207</span>
+                <span class="badge badge-info">Picking</span>
+              </div>
+              <div style="font-size:12px;color:var(--gray-600);margin-bottom:4px;">ABC Corp &mdash; 12 items</div>
+              <div style="font-size:11px;color:var(--gray-400);">Ship By: Feb 25</div>
+            </div>
+
+            <!-- Order item -->
+            <div style="padding:12px 14px;border-left:3px solid transparent;cursor:pointer;border-bottom:1px solid var(--gray-100);transition:background 0.1s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background=''">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:12px;color:var(--gray-900);font-family:var(--mono);">SO-2026-1206</span>
+                <span class="badge badge-gray">Pending</span>
+              </div>
+              <div style="font-size:12px;color:var(--gray-600);margin-bottom:4px;">DEF Inc &mdash; 36 items</div>
+              <div style="font-size:11px;color:var(--gray-400);">Ship By: Feb 26</div>
+            </div>
+
+            <!-- Order item -->
+            <div style="padding:12px 14px;border-left:3px solid transparent;cursor:pointer;border-bottom:1px solid var(--gray-100);transition:background 0.1s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background=''">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:12px;color:var(--gray-900);font-family:var(--mono);">SO-2026-1205</span>
+                <span class="badge badge-warning">Packed</span>
+              </div>
+              <div style="font-size:12px;color:var(--gray-600);margin-bottom:4px;">Virginia &mdash; 8 items</div>
+              <div style="font-size:11px;color:var(--gray-400);">Ship By: Feb 25</div>
+            </div>
+
+            <!-- Order item -->
+            <div style="padding:12px 14px;border-left:3px solid transparent;cursor:pointer;border-bottom:1px solid var(--gray-100);transition:background 0.1s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background=''">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:12px;color:var(--gray-900);font-family:var(--mono);">SO-2026-1204</span>
+                <span class="badge badge-success">Shipped</span>
+              </div>
+              <div style="font-size:12px;color:var(--gray-600);margin-bottom:4px;">GHI Ltd &mdash; 15 items</div>
+              <div style="font-size:11px;color:var(--gray-400);">Ship By: Feb 24</div>
+            </div>
+
+            <!-- Order item -->
+            <div style="padding:12px 14px;border-left:3px solid transparent;cursor:pointer;border-bottom:1px solid var(--gray-100);transition:background 0.1s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background=''">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:12px;color:var(--gray-900);font-family:var(--mono);">SO-2026-1203</span>
+                <span class="badge badge-success" style="background:#dcfce7;color:#166534;">Delivered</span>
+              </div>
+              <div style="font-size:12px;color:var(--gray-600);margin-bottom:4px;">ABC Corp &mdash; 22 items</div>
+              <div style="font-size:11px;color:var(--gray-400);">Ship By: Feb 23</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RIGHT: Order Detail (70%) -->
+        <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">SO-2026-1208 &mdash; Virginia Distribution Center</div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">Created Feb 22, 2026 &mdash; Priority: Rush</div>
+            </div>
+            <span class="badge badge-danger">Overdue</span>
+          </div>
+
+          <div style="overflow-y:auto;flex:1;padding:18px 20px;">
+
+            <!-- Fulfillment Stepper -->
+            <div style="margin-bottom:24px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gray-500);margin-bottom:12px;">Fulfillment Progress</div>
+              <div style="display:flex;align-items:center;gap:0;">
+
+                <!-- Step 1: Picked (complete) -->
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+                  <div style="width:30px;height:30px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;z-index:1;position:relative;">
+                    <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div style="font-size:11px;font-weight:600;color:var(--success);margin-top:5px;">Picked</div>
+                </div>
+
+                <!-- Line -->
+                <div style="flex:1;height:3px;background:var(--success);margin-bottom:18px;"></div>
+
+                <!-- Step 2: Packed (complete) -->
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+                  <div style="width:30px;height:30px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;z-index:1;position:relative;">
+                    <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div style="font-size:11px;font-weight:600;color:var(--success);margin-top:5px;">Packed</div>
+                </div>
+
+                <!-- Line -->
+                <div style="flex:1;height:3px;background:var(--primary-light);margin-bottom:18px;"></div>
+
+                <!-- Step 3: Shipped (active) -->
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+                  <div style="width:30px;height:30px;border-radius:50%;background:var(--primary);border:3px solid var(--primary-light);box-shadow:0 0 0 3px #dbeafe;display:flex;align-items:center;justify-content:center;z-index:1;position:relative;">
+                    <svg viewBox="0 0 24 24" fill="none" width="13" height="13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                  </div>
+                  <div style="font-size:11px;font-weight:700;color:var(--primary);margin-top:5px;">Shipped</div>
+                </div>
+
+                <!-- Line -->
+                <div style="flex:1;height:3px;background:var(--gray-200);margin-bottom:18px;"></div>
+
+                <!-- Step 4: Delivered (pending) -->
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+                  <div style="width:30px;height:30px;border-radius:50%;background:var(--gray-200);border:2px solid var(--gray-300);display:flex;align-items:center;justify-content:center;z-index:1;position:relative;">
+                    <svg viewBox="0 0 24 24" fill="none" width="13" height="13" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/></svg>
+                  </div>
+                  <div style="font-size:11px;font-weight:500;color:var(--gray-400);margin-top:5px;">Delivered</div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Order Items Table -->
+            <div style="margin-bottom:20px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gray-500);margin-bottom:10px;">Order Items</div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Item Name</th>
+                      <th>SKU</th>
+                      <th>Qty</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Virginia Classic Red 20s</td>
+                      <td class="mono">VRG-CIG-001</td>
+                      <td>600</td>
+                      <td><span class="badge badge-success">Packed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Virginia Menthol 20s</td>
+                      <td class="mono">VRG-CIG-002</td>
+                      <td>400</td>
+                      <td><span class="badge badge-success">Packed</span></td>
+                    </tr>
+                    <tr>
+                      <td>Virginia Chips BBQ 150g</td>
+                      <td class="mono">VRG-SNK-012</td>
+                      <td>480</td>
+                      <td><span class="badge badge-info">Picking</span></td>
+                    </tr>
+                    <tr>
+                      <td>Virginia Energy Drink 330ml</td>
+                      <td class="mono">VRG-BEV-003</td>
+                      <td>240</td>
+                      <td><span class="badge badge-info">Picking</span></td>
+                    </tr>
+                    <tr>
+                      <td>Virginia Juice Orange 500ml</td>
+                      <td class="mono">VRG-BEV-007</td>
+                      <td>120</td>
+                      <td><span class="badge badge-gray">Pending</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Shipping Destination -->
+            <div style="margin-bottom:20px;">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gray-500);margin-bottom:10px;">Shipping Destination</div>
+              <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;">
+                <svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--gray-800);">Virginia Distribution Center</div>
+                  <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">Mandaue City, Cebu 6014, Philippines</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="padding:14px 20px;border-top:1px solid var(--gray-100);background:var(--gray-50);display:flex;gap:8px;">
+            <button class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirm Shipment
+            </button>
+            <button class="btn btn-secondary">
+              <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              Generate Label
+            </button>
+            <button class="btn btn-secondary">
+              <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Track Shipment
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-receiving" class="screen">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Receiving &mdash; PO-2026-0847</div>
+          <div class="screen-subtitle">Virginia &nbsp;&middot;&nbsp; Expected: 24 pallets &nbsp;&middot;&nbsp; Dock Door: D-03</div>
+        </div>
+        <div class="screen-actions">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            Print Labels
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Complete Receiving
+          </button>
+        </div>
+      </div>
+
+      <!-- Stat Counter Pills -->
+      <div style="display:flex;gap:12px;margin-bottom:16px;">
+        <div style="background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:14px 20px;flex:1;">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Expected Lines</div>
+          <div style="font-size:24px;font-weight:800;color:var(--gray-900);">8</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:14px 20px;flex:1;">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Received</div>
+          <div style="font-size:24px;font-weight:800;color:var(--success);">6 / 8</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:14px 20px;flex:1;">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Pallets</div>
+          <div style="font-size:24px;font-weight:800;color:var(--gray-900);">20 / 24</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:14px 20px;flex:1;">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Discrepancies</div>
+          <div style="font-size:24px;font-weight:800;color:var(--danger);">1</div>
+        </div>
+      </div>
+
+      <!-- Two Column Grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+        <!-- LEFT: Scan to Receive Form -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Scan to Receive</div>
+          </div>
+          <div class="card-body">
+            <!-- Barcode Scan Zone -->
+            <div style="border:2px dashed var(--primary-light);border-radius:10px;padding:24px 16px;text-align:center;background:#f0f7ff;margin-bottom:16px;">
+              <svg viewBox="0 0 24 24" fill="none" width="36" height="36" stroke="var(--primary-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;"><path d="M3 5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2M3 19a2 2 0 002 2h2m10 0h2a2 2 0 002-2v-2M7 12h2m4 0h2"/></svg>
+              <div style="font-size:12px;color:var(--primary);font-weight:600;margin-bottom:10px;">Scan barcode or enter SKU</div>
+              <input type="text" placeholder="Focus here and scan..." style="width:100%;padding:9px 12px;border:1.5px solid var(--primary-light);border-radius:6px;font-size:14px;text-align:center;outline:none;font-family:var(--mono);background:#fff;color:var(--gray-800);">
+            </div>
+
+            <!-- Form Fields -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div>
+                <label style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:4px;">Quantity</label>
+                <input type="number" value="240" style="width:100%;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;outline:none;font-family:var(--font);color:var(--gray-800);">
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:4px;">Lot Number</label>
+                <input type="text" value="LOT-2026-0158" style="width:100%;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;outline:none;font-family:var(--mono);color:var(--gray-800);">
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:4px;">Expiry Date</label>
+                <input type="date" value="2027-03-15" style="width:100%;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;outline:none;font-family:var(--font);color:var(--gray-800);">
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:4px;">Condition</label>
+                <select style="width:100%;padding:8px 10px;border:1px solid var(--gray-200);border-radius:6px;font-size:13px;outline:none;font-family:var(--font);color:var(--gray-800);background:#fff;">
+                  <option>Good</option>
+                  <option>Damaged</option>
+                  <option>Quarantine</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px 16px;font-size:13px;margin-top:16px;">
+              <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirm Receipt
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT: PO Lines Table -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">PO Lines</div>
+            <span style="font-size:11px;color:var(--gray-400);">6 complete, 1 short, 1 pending</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>SKU</th>
+                  <th>Product</th>
+                  <th>Expected</th>
+                  <th>Received</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono">VRG-CIG-001</td>
+                  <td>Classic Red 20s</td>
+                  <td>2,400</td>
+                  <td style="color:var(--success);font-weight:600;">2,400</td>
+                  <td><span class="badge badge-success">Complete</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">VRG-CIG-002</td>
+                  <td>Menthol 20s</td>
+                  <td>1,800</td>
+                  <td style="color:var(--success);font-weight:600;">1,800</td>
+                  <td><span class="badge badge-success">Complete</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">VRG-CIG-005</td>
+                  <td>Lights 20s</td>
+                  <td>1,200</td>
+                  <td style="color:var(--danger);font-weight:600;">960</td>
+                  <td><span class="badge badge-danger">Short &minus;240</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">VRG-SNK-012</td>
+                  <td>Chips BBQ 150g</td>
+                  <td>960</td>
+                  <td style="color:var(--success);font-weight:600;">960</td>
+                  <td><span class="badge badge-success">Complete</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">VRG-SNK-015</td>
+                  <td>Chips Cheese 150g</td>
+                  <td>720</td>
+                  <td style="color:var(--success);font-weight:600;">720</td>
+                  <td><span class="badge badge-success">Complete</span></td>
+                </tr>
+                <tr>
+                  <td class="mono">VRG-BEV-003</td>
+                  <td>Energy Drink 330ml</td>
+                  <td>1,440</td>
+                  <td style="color:var(--success);font-weight:600;">1,440</td>
+                  <td><span class="badge badge-success">Complete</span></td>
+                </tr>
+                <tr style="background:#fffbeb;">
+                  <td class="mono">VRG-BEV-007</td>
+                  <td>Juice Orange 500ml</td>
+                  <td>960</td>
+                  <td style="color:var(--gray-400);">&mdash;</td>
+                  <td><span class="badge badge-warning">Pending</span></td>
+                </tr>
+                <tr style="background:#fffbeb;">
+                  <td class="mono">VRG-BEV-009</td>
+                  <td>Water 1L</td>
+                  <td>2,400</td>
+                  <td style="color:var(--gray-400);">&mdash;</td>
+                  <td><span class="badge badge-warning">Pending</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="screen-map" class="screen">
+      <div class="screen-header">
+        <div>
+          <div class="screen-title">Warehouse Map</div>
+          <div class="screen-subtitle">Visual occupancy overview &mdash; click any cell to inspect</div>
+        </div>
+        <div class="screen-actions">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Zone Tabs -->
+      <div style="display:flex;gap:0;margin-bottom:16px;background:#fff;border:1px solid var(--gray-200);border-radius:8px;overflow:hidden;width:fit-content;">
+        <button style="padding:8px 20px;border:none;background:var(--primary);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">Zone A</button>
+        <button style="padding:8px 20px;border:none;border-left:1px solid var(--gray-200);background:#fff;color:var(--gray-600);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font);">Zone B</button>
+        <button style="padding:8px 20px;border:none;border-left:1px solid var(--gray-200);background:#fff;color:var(--gray-600);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font);">Zone C</button>
+        <button style="padding:8px 20px;border:none;border-left:1px solid var(--gray-200);background:#fff;color:var(--gray-600);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font);">Staging</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Zone A &mdash; Aisles 1 through 8</div>
+          <div style="font-size:12px;color:var(--gray-500);">78% Occupied &nbsp;&middot;&nbsp; 156 / 200 locations used</div>
+        </div>
+
+        <!-- Aisle Labels -->
+        <div style="padding:6px 16px 0;background:var(--gray-50);display:grid;grid-template-columns:repeat(8,1fr);gap:6px;border-bottom:1px solid var(--gray-100);">
+          <div style="text-align:center;font-size:10px;font-weight:600;color:var(--gray-400);padding-bottom:4px;">Aisle 1</div>
+          <div style="text-align:center;font-size:10px;font-weight:600;color:var(--gray-400);padding-bottom:4px;">Aisle 2</div>
+          <div style="text-align:center;font-size:10px;font-weight:600;color:var(--gray-400);padding-bottom:4px;">Aisle 3</div>
+          <div style="text-align:center;font-size:10px;font-weight:600;color:var(--gray-400);padding-bottom:4px;">Aisle 4</div>
+          <div style="text-align:center;font-size:10px;font-weight:600;color:var(--gray-400);padding-bottom:4px;">Aisle 5</div>
+          <div style="text-align:center;font-size:10px;font-weight:600;color:var(--gray-400);padding-bottom:4px;">Aisle 6</div>
+          <div style="text-align:center;font-size:10px;font-weight:600;color:var(--gray-400);padding-bottom:4px;">Aisle 7</div>
+          <div style="text-align:center;font-size:10px;font-weight:600;color:var(--gray-400);padding-bottom:4px;">Aisle 8</div>
+        </div>
+
+        <!-- Grid -->
+        <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px;padding:14px 16px;">
+
+          <!-- Row 1 (Shelf 5 - top) -->
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A1-5</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A2-5</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A3-5</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fef3c7;border:1px solid #fbbf24;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#92400e;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A4-5</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A5-5</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A6-5</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#f3f4f6;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#9ca3af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A7-5</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A8-5</div>
+
+          <!-- Row 2 (Shelf 4) -->
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A1-4</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A2-4</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A3-4</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A4-4</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A5-4</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A6-4</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A7-4</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#f3f4f6;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#9ca3af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A8-4</div>
+
+          <!-- Row 3 (Shelf 3) -->
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A1-3</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A2-3</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A3-3</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A4-3</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#f3f4f6;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#9ca3af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A5-3</div>
+
+          <!-- A6-3 with tooltip -->
+          <div style="position:relative;aspect-ratio:1.4;" id="map-tooltip-cell">
+            <div style="width:100%;height:100%;border-radius:5px;background:#fee2e2;border:2px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;box-shadow:0 0 0 2px #fca5a5;" onmouseover="document.getElementById('map-tooltip').style.opacity='1'" onmouseout="document.getElementById('map-tooltip').style.opacity='0'">A6-3</div>
+            <div id="map-tooltip" style="opacity:1;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--gray-900);color:#fff;padding:8px 10px;border-radius:6px;font-size:11px;white-space:nowrap;pointer-events:none;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.3);line-height:1.6;transition:opacity 0.2s;">
+              <div style="font-weight:700;color:#93c5fd;margin-bottom:2px;">PLT-00847</div>
+              <div>Virginia &nbsp;&middot;&nbsp; VRG-CIG-001</div>
+              <div>2,400 units &nbsp;&middot;&nbsp; Last Count: Feb 20, 2026</div>
+              <div style="position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--gray-900);"></div>
+            </div>
+          </div>
+
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A7-3</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A8-3</div>
+
+          <!-- Row 4 (Shelf 2) -->
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A1-2</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A2-2</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#f3f4f6;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#9ca3af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A3-2</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A4-2</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A5-2</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fef3c7;border:1px solid #fbbf24;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#92400e;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A6-2</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A7-2</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A8-2</div>
+
+          <!-- Row 5 (Shelf 1 - ground) -->
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A1-1</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A2-1</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A3-1</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A4-1</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A5-1</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A6-1</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#fee2e2;border:1px solid #fca5a5;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#991b1b;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A7-1</div>
+          <div style="aspect-ratio:1.4;border-radius:5px;background:#dbeafe;border:1px solid #93c5fd;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#1e40af;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">A8-1</div>
+
+        </div>
+
+        <!-- Legend -->
+        <div style="display:flex;gap:20px;padding:12px 16px;border-top:1px solid var(--gray-100);background:var(--gray-50);">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-600);">
+            <div style="width:14px;height:14px;border-radius:3px;background:#fee2e2;border:1px solid #fca5a5;"></div>
+            Full (&gt;90%)
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-600);">
+            <div style="width:14px;height:14px;border-radius:3px;background:#dbeafe;border:1px solid #93c5fd;"></div>
+            Occupied
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-600);">
+            <div style="width:14px;height:14px;border-radius:3px;background:#f3f4f6;border:1px solid #e5e7eb;"></div>
+            Empty
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-600);">
+            <div style="width:14px;height:14px;border-radius:3px;background:#fef3c7;border:1px solid #fbbf24;"></div>
+            Alert (Expiring / Issue)
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="screen-picking" class="screen" style="background:var(--gray-100);">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div class="screen-title" style="margin-bottom:4px;">Mobile Picking Interface</div>
+        <div class="screen-subtitle">Tablet / Scanner view for warehouse floor staff</div>
+      </div>
+
+      <!-- Phone Frame -->
+      <div style="width:375px;height:700px;border:3px solid #1f2937;border-radius:24px;overflow:hidden;margin:0 auto;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,0.25),0 0 0 1px rgba(0,0,0,0.1);display:flex;flex-direction:column;">
+
+        <!-- Phone Header -->
+        <div style="background:#1e40af;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer;"><polyline points="15 18 9 12 15 6"/></svg>
+          <span style="font-size:14px;font-weight:700;letter-spacing:-0.2px;">Pick Task #PT-4521</span>
+          <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer;"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </div>
+
+        <!-- Phone Body -->
+        <div style="flex:1;overflow-y:auto;padding:14px 14px 8px;">
+
+          <!-- Order Info Row -->
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);font-weight:500;">SO-2026-1208 &nbsp;&middot;&nbsp; Virginia</div>
+              <div style="font-size:13px;font-weight:700;color:var(--gray-900);margin-top:1px;">24 items</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:10px;color:var(--gray-400);">Progress</div>
+              <div style="font-size:18px;font-weight:800;color:var(--primary);letter-spacing:-0.5px;">18/24</div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div style="height:8px;background:var(--gray-200);border-radius:4px;overflow:hidden;margin-bottom:16px;">
+            <div style="height:100%;width:75%;background:var(--success);border-radius:4px;"></div>
+          </div>
+
+          <!-- Current Item Label -->
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gray-400);font-weight:700;margin-bottom:8px;">Current Item</div>
+
+          <!-- Current Pick Card -->
+          <div style="background:#eff6ff;border:2px solid var(--primary);border-radius:10px;padding:12px;margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--gray-900);font-family:var(--mono);">VRG-SNK-012</div>
+                <div style="font-size:12px;color:var(--gray-600);margin-top:2px;">Virginia Chips BBQ 150g</div>
+              </div>
+              <div style="font-size:26px;font-weight:800;color:var(--primary);letter-spacing:-1px;">x48</div>
+            </div>
+            <div style="display:inline-flex;align-items:center;gap:4px;background:#fef3c7;color:#92400e;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:6px;">
+              <svg viewBox="0 0 24 24" fill="none" width="11" height="11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              A-03-02-04
+            </div>
+            <div style="font-size:11px;color:var(--gray-500);">Lot: LOT-2026-0099 &nbsp;&middot;&nbsp; Pallet: PLT-00798</div>
+          </div>
+
+          <!-- Scan Zone -->
+          <div style="border:2px dashed var(--gray-300);border-radius:10px;padding:18px 12px;text-align:center;margin-bottom:14px;background:var(--gray-50);">
+            <svg viewBox="0 0 24 24" fill="none" width="30" height="30" stroke="var(--gray-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 6px;"><path d="M3 5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2M3 19a2 2 0 002 2h2m10 0h2a2 2 0 002-2v-2M7 12h2m4 0h2"/></svg>
+            <div style="font-size:12px;color:var(--gray-500);font-weight:500;">Scan location barcode to confirm</div>
+          </div>
+
+          <!-- Next Items Label -->
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gray-400);font-weight:700;margin-bottom:8px;">Next Items</div>
+
+          <!-- Next Item 1 -->
+          <div style="background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--gray-800);font-family:var(--mono);">VRG-BEV-003</div>
+                <div style="font-size:11px;color:var(--gray-500);margin-top:1px;">Energy Drink 330ml</div>
+              </div>
+              <div style="font-size:18px;font-weight:700;color:var(--gray-600);">x120</div>
+            </div>
+            <div style="display:inline-flex;align-items:center;gap:4px;background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;">
+              <svg viewBox="0 0 24 24" fill="none" width="10" height="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              C-01-01-01
+            </div>
+          </div>
+
+          <!-- Next Item 2 -->
+          <div style="background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--gray-800);font-family:var(--mono);">VRG-BEV-007</div>
+                <div style="font-size:11px;color:var(--gray-500);margin-top:1px;">Juice Orange 500ml</div>
+              </div>
+              <div style="font-size:18px;font-weight:700;color:var(--gray-600);">x72</div>
+            </div>
+            <div style="display:inline-flex;align-items:center;gap:4px;background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;">
+              <svg viewBox="0 0 24 24" fill="none" width="10" height="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              C-02-03-01
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Phone Footer Tabs -->
+        <div style="display:flex;border-top:1px solid var(--gray-200);background:#fff;flex-shrink:0;">
+          <!-- Tasks Tab (active) -->
+          <div style="flex:1;padding:8px 4px 10px;text-align:center;cursor:pointer;">
+            <svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 2px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            <div style="font-size:9px;font-weight:700;color:var(--primary);">Tasks</div>
+          </div>
+          <!-- Scan Tab -->
+          <div style="flex:1;padding:8px 4px 10px;text-align:center;cursor:pointer;">
+            <svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="var(--gray-400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 2px;"><path d="M3 5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2M3 19a2 2 0 002 2h2m10 0h2a2 2 0 002-2v-2M7 12h2m4 0h2"/></svg>
+            <div style="font-size:9px;font-weight:500;color:var(--gray-400);">Scan</div>
+          </div>
+          <!-- Inventory Tab -->
+          <div style="flex:1;padding:8px 4px 10px;text-align:center;cursor:pointer;">
+            <svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="var(--gray-400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 2px;"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><polyline points="3 8 12 13 21 8"/><line x1="12" y1="13" x2="12" y2="21"/></svg>
+            <div style="font-size:9px;font-weight:500;color:var(--gray-400);">Inventory</div>
+          </div>
+          <!-- Profile Tab -->
+          <div style="flex:1;padding:8px 4px 10px;text-align:center;cursor:pointer;">
+            <svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="var(--gray-400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 2px;"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <div style="font-size:9px;font-weight:500;color:var(--gray-400);">Profile</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="screen-clients" class="screen">
+      <div class="screen-header">
+        <div><div class="screen-title">Clients / Tenants</div><div class="screen-subtitle">3PL tenant and client management</div></div>
+        <div class="screen-actions">
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Client
+          </button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <!-- Client Card: Virginia -->
+        <div class="card" style="padding:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;">
+            <div>
+              <div style="font-size:16px;font-weight:700;color:var(--gray-900);">Virginia</div>
+              <div style="font-size:12px;color:var(--gray-500);">Code: VRG &middot; Since Jan 2024</div>
+            </div>
+            <span class="badge badge-success"><span class="badge-dot"></span> Active</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">PALLETS</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">842</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">SKUs</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">247</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">MONTHLY REV</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">P 168K</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">LOCATIONS</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">198</div>
+            </div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:85%;"></div></div>
+          <div style="font-size:11px;color:var(--gray-500);margin-top:4px;">85% of contracted space used</div>
+        </div>
+
+        <!-- Client Card: ABC Corporation -->
+        <div class="card" style="padding:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;">
+            <div>
+              <div style="font-size:16px;font-weight:700;color:var(--gray-900);">ABC Corporation</div>
+              <div style="font-size:12px;color:var(--gray-500);">Code: ABC &middot; Since Mar 2024</div>
+            </div>
+            <span class="badge badge-success"><span class="badge-dot"></span> Active</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">PALLETS</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">623</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">SKUs</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">189</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">MONTHLY REV</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">P 124K</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">LOCATIONS</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">145</div>
+            </div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:65%;"></div></div>
+          <div style="font-size:11px;color:var(--gray-500);margin-top:4px;">65% of contracted space used</div>
+        </div>
+
+        <!-- Client Card: DEF Industries -->
+        <div class="card" style="padding:20px;">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px;">
+            <div>
+              <div style="font-size:16px;font-weight:700;color:var(--gray-900);">DEF Industries</div>
+              <div style="font-size:12px;color:var(--gray-500);">Code: DEF &middot; Since Jun 2024</div>
+            </div>
+            <span class="badge badge-success"><span class="badge-dot"></span> Active</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">PALLETS</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">518</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">SKUs</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">312</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">MONTHLY REV</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">P 103K</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">LOCATIONS</div>
+              <div style="font-size:20px;font-weight:700;color:var(--gray-900);">120</div>
+            </div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:72%;"></div></div>
+          <div style="font-size:11px;color:var(--gray-500);margin-top:4px;">72% of contracted space used</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-billing" class="screen">
+      <div class="screen-header">
+        <div><div class="screen-title">3PL Billing</div><div class="screen-subtitle">February 2026 billing cycle</div></div>
+        <div class="screen-actions">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Generate All Invoices
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Manual Charge
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary Stat Cards -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Revenue</div>
+          <div class="kpi-value">P 473,420</div>
+          <div class="kpi-sub">Feb 2026 billing cycle</div>
+        </div>
+        <div class="kpi-card warning">
+          <div class="kpi-label">Draft Invoices</div>
+          <div class="kpi-value">2</div>
+          <div class="kpi-sub">Pending review</div>
+        </div>
+        <div class="kpi-card" style="--kpi-accent:var(--primary-light);">
+          <div class="kpi-label">Sent</div>
+          <div class="kpi-value">1</div>
+          <div class="kpi-sub">Awaiting payment</div>
+        </div>
+        <div class="kpi-card success">
+          <div class="kpi-label">Paid</div>
+          <div class="kpi-value">1</div>
+          <div class="kpi-sub">Payment received</div>
+        </div>
+      </div>
+
+      <!-- Billing Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Monthly Billing Summary</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Storage (Pallet-Days)</th>
+                <th>Storage Charge</th>
+                <th>Handling (Units)</th>
+                <th>Handling Charge</th>
+                <th>Additional</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600;">Virginia</td>
+                <td>23,576</td>
+                <td>P 117,880.00</td>
+                <td>12,480</td>
+                <td>P 37,440.00</td>
+                <td>P 12,500.00</td>
+                <td style="font-weight:700;font-size:13px;">P 167,820.00</td>
+                <td><span class="badge badge-warning"><span class="badge-dot"></span> Draft</span></td>
+                <td><button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Review</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">ABC Corp</td>
+                <td>17,444</td>
+                <td>P 87,220.00</td>
+                <td>8,960</td>
+                <td>P 26,880.00</td>
+                <td>P 10,000.00</td>
+                <td style="font-weight:700;font-size:13px;">P 124,100.00</td>
+                <td><span class="badge badge-info"><span class="badge-dot"></span> Sent</span></td>
+                <td><button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  View</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">DEF Industries</td>
+                <td>14,504</td>
+                <td>P 72,520.00</td>
+                <td>7,200</td>
+                <td>P 21,600.00</td>
+                <td>P 8,500.00</td>
+                <td style="font-weight:700;font-size:13px;">P 102,620.00</td>
+                <td><span class="badge badge-warning"><span class="badge-dot"></span> Draft</span></td>
+                <td><button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Review</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">GHI Limited</td>
+                <td>11,536</td>
+                <td>P 57,680.00</td>
+                <td>5,400</td>
+                <td>P 16,200.00</td>
+                <td>P 5,000.00</td>
+                <td style="font-weight:700;font-size:13px;">P 78,880.00</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span> Paid</span></td>
+                <td><button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  View</button></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr style="background:var(--gray-50);">
+                <td style="font-weight:700;">TOTAL</td>
+                <td style="font-weight:600;">67,060</td>
+                <td style="font-weight:600;">P 335,300.00</td>
+                <td style="font-weight:600;">34,040</td>
+                <td style="font-weight:600;">P 102,120.00</td>
+                <td style="font-weight:600;">P 36,000.00</td>
+                <td style="font-weight:700;font-size:14px;color:var(--primary);">P 473,420.00</td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-reports" class="screen">
+      <div class="screen-header">
+        <div><div class="screen-title">Reports &amp; Analytics</div><div class="screen-subtitle">Operational insights and KPIs</div></div>
+        <div class="screen-actions">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export PDF
+          </button>
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Date Range
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Stat Cards -->
+      <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr);">
+
+        <div class="kpi-card success">
+          <div class="kpi-label">Pick Accuracy</div>
+          <div class="kpi-value">99.7%</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            0.2% from last month
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Dock-to-Stock</div>
+          <div class="kpi-value">2.4h</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            Improved by 18 min
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">Orders/Day (Avg)</div>
+          <div class="kpi-value">47</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            12% growth
+          </div>
+        </div>
+
+        <div class="kpi-card success">
+          <div class="kpi-label">Inventory Variance</div>
+          <div class="kpi-value">0.3%</div>
+          <div class="kpi-trend up">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            Target: &lt;0.5%
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Two-column grid: Throughput chart + Staff Productivity table -->
+      <div class="dashboard-grid">
+
+        <!-- Left: Throughput Bar Chart -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Throughput &mdash; Last 7 Days</span>
+            <span style="font-size:10px;color:var(--gray-400);">Orders Shipped</span>
+          </div>
+          <div class="card-body" style="padding-top:12px;">
+            <div style="display:flex;padding-left:36px;height:200px;position:relative;">
+              <!-- Y Axis -->
+              <div style="position:absolute;left:0;top:0;bottom:22px;width:36px;display:flex;flex-direction:column;justify-content:space-between;">
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">120</span>
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">90</span>
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">60</span>
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">30</span>
+                <span style="font-size:10px;color:var(--gray-400);text-align:right;padding-right:6px;">0</span>
+              </div>
+              <!-- Bar Chart -->
+              <div style="flex:1;border-left:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);display:flex;align-items:flex-end;gap:8px;padding:0 8px;height:178px;">
+                <!-- Mon 89 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">89</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:134px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);padding-top:4px;">Mon</span>
+                </div>
+                <!-- Tue 104 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">104</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:157px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);padding-top:4px;">Tue</span>
+                </div>
+                <!-- Wed 76 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">76</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:115px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);padding-top:4px;">Wed</span>
+                </div>
+                <!-- Thu 118 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">118</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:178px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);padding-top:4px;">Thu</span>
+                </div>
+                <!-- Fri 95 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">95</span>
+                  <div style="width:100%;background:var(--primary-light);border-radius:3px 3px 0 0;height:143px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);padding-top:4px;">Fri</span>
+                </div>
+                <!-- Sat 42 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">42</span>
+                  <div style="width:100%;background:var(--gray-300);border-radius:3px 3px 0 0;height:63px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);padding-top:4px;">Sat</span>
+                </div>
+                <!-- Sun 12 -->
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;">
+                  <span style="font-size:10px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">12</span>
+                  <div style="width:100%;background:var(--gray-200);border-radius:3px 3px 0 0;height:18px;"></div>
+                  <span style="font-size:10px;color:var(--gray-500);padding-top:4px;">Sun</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:center;padding:8px 14px;font-size:11px;color:var(--gray-500);border-top:1px solid var(--gray-100);">Orders shipped per day</div>
+        </div>
+
+        <!-- Right: Staff Productivity Table -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Staff Productivity</span>
+            <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;">
+              <svg viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export
+            </button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Staff</th>
+                  <th>Role</th>
+                  <th>Tasks</th>
+                  <th>Accuracy</th>
+                  <th>Avg Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600;">Maria S.</td>
+                  <td>Picker</td>
+                  <td>48</td>
+                  <td><span class="badge badge-success">100%</span></td>
+                  <td>4.2 min</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Pedro R.</td>
+                  <td>Picker</td>
+                  <td>42</td>
+                  <td><span class="badge badge-success">99.5%</span></td>
+                  <td>4.8 min</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Juan D.</td>
+                  <td>Receiver</td>
+                  <td>12 POs</td>
+                  <td><span class="badge badge-success">100%</span></td>
+                  <td>28 min</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Carlos T.</td>
+                  <td>Packer</td>
+                  <td>38</td>
+                  <td><span class="badge badge-warning">98.7%</span></td>
+                  <td>6.1 min</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="screen-settings" class="screen">
+      <div class="screen-header">
+        <div><div class="screen-title">Settings &amp; Administration</div><div class="screen-subtitle">System configuration and preferences</div></div>
+        <div class="screen-actions">
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Config
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Bar -->
+      <div style="display:flex;gap:4px;margin-bottom:16px;">
+        <button class="btn btn-primary" style="border-radius:6px;">
+          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Warehouse Zones
+        </button>
+        <button class="btn" style="background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-200);border-radius:6px;">
+          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          Reorder Rules
+        </button>
+        <button class="btn" style="background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-200);border-radius:6px;">
+          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          User Roles
+        </button>
+        <button class="btn" style="background:var(--gray-100);color:var(--gray-600);border:1px solid var(--gray-200);border-radius:6px;">
+          <svg viewBox="0 0 24 24" fill="none" width="14" height="14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          Integrations
+        </button>
+      </div>
+
+      <!-- Warehouse Zones Content -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Warehouse Zones</span>
+          <button class="btn btn-primary" style="padding:5px 12px;font-size:11px;">
+            <svg viewBox="0 0 24 24" fill="none" width="12" height="12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Zone
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Zone Code</th>
+                <th>Zone Name</th>
+                <th>Type</th>
+                <th>Aisles</th>
+                <th>Rack Levels</th>
+                <th>Total Locations</th>
+                <th>Utilization</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono" style="font-weight:600;">Zone A</td>
+                <td>Dry Storage</td>
+                <td>Standard</td>
+                <td>8</td>
+                <td>5</td>
+                <td>200</td>
+                <td style="font-weight:600;color:var(--warning);">78%</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span> Active</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="font-weight:600;">Zone B</td>
+                <td>Dry Storage (FMCG)</td>
+                <td>Standard</td>
+                <td>6</td>
+                <td>5</td>
+                <td>150</td>
+                <td style="font-weight:600;color:var(--danger);">85%</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span> Active</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="font-weight:600;">Zone C</td>
+                <td>Cold Storage</td>
+                <td>Temperature Controlled</td>
+                <td>4</td>
+                <td>3</td>
+                <td>60</td>
+                <td style="font-weight:600;color:var(--success);">62%</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span> Active</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="font-weight:600;">STG</td>
+                <td>Staging Area</td>
+                <td>Floor</td>
+                <td>2</td>
+                <td>1</td>
+                <td>20</td>
+                <td style="font-weight:600;color:var(--success);">45%</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span> Active</span></td>
+              </tr>
+              <tr>
+                <td class="mono" style="font-weight:600;">QTN</td>
+                <td>Quarantine</td>
+                <td>Restricted</td>
+                <td>1</td>
+                <td>2</td>
+                <td>10</td>
+                <td style="font-weight:600;color:var(--success);">30%</td>
+                <td><span class="badge badge-success"><span class="badge-dot"></span> Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- ============================
+     JAVASCRIPT
+============================ -->
+<script>
+  // All screens and their corresponding nav button/sidebar item management
+  var sidebarCollapsed = false;
+
+  var screenMap = {
+    'cover':      { navIdx: 0 },
+    'dashboard':  { navIdx: 1 },
+    'inventory':  { navIdx: 2 },
+    'orders':     { navIdx: 3 },
+    'receiving':  { navIdx: 4 },
+    'map':        { navIdx: 5 },
+    'picking':    { navIdx: 6 },
+    'clients':    { navIdx: 7 },
+    'billing':    { navIdx: 8 },
+    'reports':    { navIdx: 9 },
+    'settings':   { navIdx: 10 }
+  };
+
+  function showScreen(name) {
+    // Hide all screens
+    var screens = document.querySelectorAll('.screen');
+    screens.forEach(function(s) { s.classList.remove('active'); });
+
+    // Show target screen
+    var target = document.getElementById('screen-' + name);
+    if (target) target.classList.add('active');
+
+    // Update nav buttons
+    var navBtns = document.querySelectorAll('#top-nav .nav-btn');
+    navBtns.forEach(function(btn) { btn.classList.remove('active'); });
+
+    var info = screenMap[name];
+    if (info !== undefined) {
+      var btn = navBtns[info.navIdx];
+      if (btn) btn.classList.add('active');
+    }
+
+    // Update sidebar items
+    var sidebarItems = document.querySelectorAll('.sidebar-item');
+    sidebarItems.forEach(function(item) { item.classList.remove('active'); });
+
+    // Find sidebar item by onclick attribute match
+    sidebarItems.forEach(function(item) {
+      var onclick = item.getAttribute('onclick') || '';
+      if (onclick.indexOf("'" + name + "'") !== -1) {
+        item.classList.add('active');
+      }
+    });
+
+    // Special: cover screen is handled differently (flex vs block)
+    var coverEl = document.getElementById('screen-cover');
+    if (coverEl) {
+      if (name === 'cover') {
+        coverEl.style.display = 'flex';
+      } else {
+        coverEl.style.display = 'none';
+      }
+    }
+  }
+
+  function toggleSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    var icon = document.getElementById('sidebar-toggle-icon');
+    sidebarCollapsed = !sidebarCollapsed;
+    if (sidebarCollapsed) {
+      sidebar.classList.add('collapsed');
+      // Rotate icon to point right
+      icon.innerHTML = '<polyline points="9 18 15 12 9 6"/>';
+    } else {
+      sidebar.classList.remove('collapsed');
+      icon.innerHTML = '<polyline points="15 18 9 12 15 6"/>';
+    }
+  }
+
+  // Initialize on load
+  (function() {
+    // Ensure cover is shown with flex
+    var coverEl = document.getElementById('screen-cover');
+    if (coverEl) coverEl.style.display = 'flex';
+
+    // Ensure nav first button is active (Cover)
+    var navBtns = document.querySelectorAll('#top-nav .nav-btn');
+    if (navBtns[0]) navBtns[0].classList.add('active');
+  })();
+</script>
+
+</body>
+</html>

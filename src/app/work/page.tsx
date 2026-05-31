@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     title: "Work | Adrian Jenson",
     description:
       "AI SaaS platforms, enterprise web applications, mobile apps, and AI micro-products.",
-    url: "https://adrianjenson.com/work",
+    url: "https://ajenson.com/work",
   },
 };
 
@@ -97,6 +97,16 @@ const featuredProjects = [
       "A high-performance computing cloud management platform serving enterprise clients. Led a team of 4 frontend engineers to build a comprehensive dashboard for compute resource management, billing, and team access controls using Angular and TypeScript.",
     tech: ["Angular", "TypeScript", "RxJS", "Cypress", "Node.js", "PostgreSQL"],
     liveUrl: null,
+    githubUrl: null,
+    status: "Live" as Status,
+  },
+  {
+    title: "Shazzy Milktea",
+    subtitle: "Full Software Suite for a Real Milk Tea Shop",
+    description:
+      "A complete software suite I built and operate for my own milk tea shop in Cebu, Philippines — as both founder and developer. Spans a customer loyalty PWA with QR stamp cards, vouchers, and referrals (portal.shazzymilktea.com); a staff operations dashboard for sales, inventory, promos, and real-time analytics; a staff time-tracking system with payroll CSV exports; and the public brand site with FoodPanda delivery integration. Firebase-backed across multiple offline-capable PWAs, built end-to-end.",
+    tech: ["Next.js 15", "React 19", "Angular", "TypeScript", "Firebase", "PWA"],
+    liveUrl: "https://shazzymilktea.com",
     githubUrl: null,
     status: "Live" as Status,
   },
@@ -337,7 +347,7 @@ export default function WorkPage() {
 
               <ul className="flex flex-wrap gap-2 mt-auto" aria-label={`Technologies used in ${project.title}`}>
                 {project.tech.map((t) => (
-                  <li key={t} className="font-mono text-xs text-slate">
+                  <li key={t} className="font-mono text-xs text-green-accent bg-green-accent/10 border border-green-accent/20 px-2.5 py-1 rounded">
                     {t}
                   </li>
                 ))}
@@ -399,7 +409,7 @@ export default function WorkPage() {
 
               <ul className="flex flex-wrap gap-2 mt-auto" aria-label={`Technologies used in ${project.title}`}>
                 {project.tech.map((t) => (
-                  <li key={t} className="font-mono text-xs text-slate">
+                  <li key={t} className="font-mono text-xs text-green-accent bg-green-accent/10 border border-green-accent/20 px-2.5 py-1 rounded">
                     {t}
                   </li>
                 ))}

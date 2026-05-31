@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useId } from "react";
+import { useState, useId, useRef } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Button from "@/components/ui/Button";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
@@ -44,6 +45,9 @@ export default function ContactForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const [turnstileError, setTurnstileError] = useState(false);
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -95,8 +99,14 @@ export default function ContactForm() {
       return;
     }
 
+    if (!turnstileToken) {
+      setTurnstileError(true);
+      return;
+    }
+
     setStatus("loading");
     setErrorMessage("");
+    setTurnstileError(false);
 
     try {
       await addDoc(collection(db, "contact-submissions"), {
@@ -304,6 +314,26 @@ export default function ContactForm() {
         <p className="mt-1.5 text-xs text-slate/60">
           {form.message.length} / 2000 characters
         </p>
+      </div>
+
+      {/* Turnstile CAPTCHA */}
+      <div className="mb-6">
+        <Turnstile
+          ref={turnstileRef}
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+          onSuccess={(token) => {
+            setTurnstileToken(token);
+            setTurnstileError(false);
+          }}
+          onError={() => setTurnstileError(true)}
+          onExpire={() => setTurnstileToken("")}
+          options={{ theme: "dark", size: "normal" }}
+        />
+        {turnstileError && (
+          <p role="alert" className="mt-1.5 text-xs text-red-400">
+            Please complete the verification above.
+          </p>
+        )}
       </div>
 
       <Button

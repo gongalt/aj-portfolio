@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Platform Proposal — Dayanne Costa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Jost:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       CSS CUSTOM PROPERTIES
+       ============================================ */
+    :root {
+      --black: #0A0A09;
+      --dark: #111110;
+      --dark-warm: #1A1917;
+      --dark-surface: #222220;
+      --gold: #C5A467;
+      --gold-light: #D4B87A;
+      --gold-dim: #A08A55;
+      --gold-glow: rgba(197, 164, 103, 0.12);
+      --gold-border: rgba(197, 164, 103, 0.2);
+      --cream: #F5F0EB;
+      --cream-dark: #E8E0D8;
+      --warm-white: #FAF9F7;
+      --text-primary: #F0EDE8;
+      --text-secondary: #9A9790;
+      --text-dim: #6A6862;
+      --font-heading: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Jost', 'Helvetica Neue', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* ============================================
+       RESET & BASE
+       ============================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--black);
+      color: var(--text-primary);
+      font-weight: 300;
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+    }
+
+    ::selection {
+      background: var(--gold);
+      color: var(--black);
+    }
+
+    /* ============================================
+       SLIDE SYSTEM
+       ============================================ */
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 60px 40px;
+    }
+
+    .slide-inner {
+      width: 100%;
+      max-width: 1200px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Slide reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+    .reveal-delay-6 { transition-delay: 0.6s; }
+
+    /* ============================================
+       NAVIGATION
+       ============================================ */
+    .nav-dots {
+      position: fixed;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s var(--ease-out-expo);
+      position: relative;
+    }
+
+    .nav-dot::after {
+      content: attr(data-label);
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space: nowrap;
+      font-size: 11px;
+      font-family: var(--font-body);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .nav-dot:hover::after { opacity: 1; }
+
+    .nav-dot.active {
+      background: var(--gold);
+      transform: scale(1.4);
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 100;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+    }
+
+    .slide-counter .current { color: var(--gold); font-weight: 400; }
+
+    /* ============================================
+       TYPOGRAPHY
+       ============================================ */
+    .heading-display {
+      font-family: var(--font-heading);
+      font-weight: 300;
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .heading-section {
+      font-family: var(--font-heading);
+      font-weight: 400;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .heading-sub {
+      font-family: var(--font-heading);
+      font-weight: 500;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      line-height: 1.25;
+      color: var(--text-primary);
+    }
+
+    .text-gold { color: var(--gold); }
+    .text-dim { color: var(--text-secondary); }
+    .text-muted { color: var(--text-dim); }
+
+    .label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .body-text {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      max-width: 640px;
+    }
+
+    .body-text strong { color: var(--text-primary); font-weight: 500; }
+
+    /* ============================================
+       DECORATIVE ELEMENTS
+       ============================================ */
+    .gold-line {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      display: block;
+      margin: 24px 0;
+    }
+
+    .gold-line-long {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold-border), transparent);
+    }
+
+    .section-number {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--gold-dim);
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    /* ============================================
+       SLIDE 1: COVER
+       ============================================ */
+    .slide-cover {
+      background: var(--black);
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .slide-cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(197, 164, 103, 0.06) 0%, transparent 70%);
+    }
+
+    .cover-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      border: 1px solid var(--gold-border);
+      border-radius: 100px;
+      margin-bottom: 48px;
+    }
+
+    .cover-badge span {
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 400;
+    }
+
+    .cover-title {
+      font-family: var(--font-heading);
+      font-weight: 300;
+      font-size: clamp(3.2rem, 7vw, 6.5rem);
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 28px;
+    }
+
+    .cover-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .cover-subtitle {
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+      margin-bottom: 56px;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      padding-top: 40px;
+      border-top: 1px solid var(--gold-border);
+    }
+
+    .cover-meta-item {
+      text-align: center;
+    }
+
+    .cover-meta-item .value {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      display: block;
+    }
+
+    .cover-meta-item .key {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* ============================================
+       SLIDE 2: THE OPPORTUNITY
+       ============================================ */
+    .slide-opportunity {
+      background: var(--dark);
+    }
+
+    .slide-opportunity::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--gold-glow), transparent 60%);
+      opacity: 0.5;
+    }
+
+    .opportunity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .quote-block {
+      padding: 32px 0 32px 32px;
+      border-left: 2px solid var(--gold);
+      margin: 32px 0;
+    }
+
+    .quote-block p {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+
+    .opportunity-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .stat-card {
+      background: var(--dark-surface);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 28px 32px;
+      transition: border-color 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--gold-border);
+    }
+
+    .stat-value {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ============================================
+       SLIDE 3: WHAT WE'VE BUILT
+       ============================================ */
+    .slide-built {
+      background: var(--dark-warm);
+    }
+
+    .built-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .browser-mockup {
+      background: var(--dark-surface);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    }
+
+    .browser-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .browser-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .browser-dot:nth-child(1) { background: #ff5f57; }
+    .browser-dot:nth-child(2) { background: #ffbd2e; }
+    .browser-dot:nth-child(3) { background: #28c840; }
+
+    .browser-url {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      background: rgba(255,255,255,0.03);
+      padding: 5px 16px;
+      border-radius: 6px;
+      margin-left: 8px;
+    }
+
+    .browser-content {
+      aspect-ratio: 16 / 10;
+      background: linear-gradient(135deg, #1a1a1a, #2a2520);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .browser-content::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(197,164,103,0.08) 100%);
+    }
+
+    .mockup-text {
+      text-align: center;
+      z-index: 1;
+    }
+
+    .mockup-text .site-name {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .mockup-text .site-desc {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .success-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .metric {
+      padding: 20px;
+      background: rgba(197, 164, 103, 0.05);
+      border: 1px solid var(--gold-border);
+      border-radius: 8px;
+    }
+
+    .metric-icon {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+
+    .metric-name {
+      font-size: 0.85rem;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .metric-desc {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    /* ============================================
+       SLIDE 4: THE SOLUTION
+       ============================================ */
+    .slide-solution {
+      background: var(--black);
+    }
+
+    .slide-solution::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, transparent, var(--dark) 80%);
+    }
+
+    .solution-diagram {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      margin-top: 48px;
+    }
+
+    .solution-hub {
+      text-align: center;
+      padding: 32px 48px;
+      background: linear-gradient(135deg, rgba(197,164,103,0.1), rgba(197,164,103,0.04));
+      border: 1px solid var(--gold-border);
+      border-radius: 16px;
+      position: relative;
+    }
+
+    .solution-hub::after {
+      content: '';
+      position: absolute;
+      bottom: -32px;
+      left: 50%;
+      width: 1px;
+      height: 32px;
+      background: var(--gold-border);
+    }
+
+    .solution-hub h3 {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--gold);
+    }
+
+    .solution-hub p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .solution-branches {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+    }
+
+    .branch-card {
+      background: var(--dark-surface);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 28px;
+      text-align: center;
+      transition: all 0.4s var(--ease-out-expo);
+      position: relative;
+    }
+
+    .branch-card::before {
+      content: '';
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      width: 1px;
+      height: 16px;
+      background: var(--gold-border);
+    }
+
+    .branch-card:hover {
+      border-color: var(--gold-border);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+
+    .branch-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--gold-glow);
+      border: 1px solid var(--gold-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.2rem;
+    }
+
+    .branch-card h4 {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .branch-card p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .solution-bottom {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .solution-feature {
+      text-align: center;
+      padding: 20px 16px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .solution-feature .feat-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      font-weight: 500;
+    }
+
+    .solution-feature .feat-value {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      margin-top: 4px;
+    }
+
+    /* ============================================
+       SLIDE 5: PHASE BREAKDOWN
+       ============================================ */
+    .slide-phases {
+      background: var(--dark);
+    }
+
+    .phases-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .phase-card {
+      background: var(--dark-surface);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease;
+    }
+
+    .phase-card:hover { border-color: var(--gold-border); }
+
+    .phase-card.featured {
+      border-color: var(--gold-border);
+      background: linear-gradient(180deg, rgba(197,164,103,0.06), var(--dark-surface) 40%);
+    }
+
+    .phase-card.featured::before {
+      content: 'START HERE';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      color: var(--black);
+      background: var(--gold);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .phase-number {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gold-dim);
+      letter-spacing: 0.15em;
+      margin-bottom: 12px;
+    }
+
+    .phase-title {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .phase-timeline {
+      font-size: 0.85rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .phase-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .phase-list li {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      padding-left: 20px;
+      position: relative;
+      line-height: 1.45;
+    }
+
+    .phase-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+    }
+
+    .phase-price {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .phase-price .amount {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--gold);
+    }
+
+    .phase-price .period {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    /* ============================================
+       SLIDE 6: INVESTMENT
+       ============================================ */
+    .slide-investment {
+      background: var(--black);
+    }
+
+    .slide-investment::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 50%, rgba(197,164,103,0.04) 0%, transparent 50%);
+    }
+
+    .investment-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-top: 48px;
+    }
+
+    .total-card {
+      background: linear-gradient(135deg, rgba(197,164,103,0.08), rgba(197,164,103,0.02));
+      border: 1px solid var(--gold-border);
+      border-radius: 20px;
+      padding: 48px;
+      text-align: center;
+    }
+
+    .total-amount {
+      font-family: var(--font-heading);
+      font-size: clamp(3.5rem, 6vw, 5rem);
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      margin: 16px 0;
+    }
+
+    .total-desc {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      max-width: 400px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .investment-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .breakdown-row:last-child {
+      border-bottom: none;
+      padding-top: 20px;
+      border-top: 1px solid var(--gold-border);
+    }
+
+    .breakdown-label {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .breakdown-value {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--text-primary);
+      font-weight: 400;
+    }
+
+    .breakdown-row:last-child .breakdown-label {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .breakdown-row:last-child .breakdown-value {
+      color: var(--gold);
+      font-size: 1.5rem;
+    }
+
+    /* ============================================
+       SLIDE 7: ROI
+       ============================================ */
+    .slide-roi {
+      background: var(--dark-warm);
+    }
+
+    .roi-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      margin: 56px 0 40px;
+    }
+
+    .roi-box {
+      text-align: center;
+      padding: 40px;
+      border-radius: 16px;
+      min-width: 260px;
+    }
+
+    .roi-box.cost {
+      background: var(--dark-surface);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .roi-box.return {
+      background: linear-gradient(135deg, rgba(197,164,103,0.1), rgba(197,164,103,0.03));
+      border: 1px solid var(--gold-border);
+    }
+
+    .roi-box .roi-num {
+      font-family: var(--font-heading);
+      font-size: 3rem;
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .roi-box.cost .roi-num { color: var(--text-primary); }
+    .roi-box.return .roi-num { color: var(--gold); }
+
+    .roi-box .roi-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .roi-arrow {
+      font-size: 2rem;
+      color: var(--gold-dim);
+      animation: arrowPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% { opacity: 0.5; transform: translateX(0); }
+      50% { opacity: 1; transform: translateX(6px); }
+    }
+
+    .roi-equation {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .roi-equation p {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    .roi-equation strong {
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .roi-note {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-top: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    /* ============================================
+       SLIDE 8: MARKET CONTEXT
+       ============================================ */
+    .slide-market {
+      background: var(--dark);
+    }
+
+    .market-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .market-card {
+      background: var(--dark-surface);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+    }
+
+    .market-card.ours {
+      border: 2px solid var(--gold);
+      background: linear-gradient(180deg, rgba(197,164,103,0.08), var(--dark-surface) 50%);
+    }
+
+    .market-card.ours::before {
+      content: 'YOUR PROPOSAL';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      color: var(--black);
+      background: var(--gold);
+      padding: 4px 14px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .market-type {
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .market-name {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .market-price-range {
+      font-family: var(--font-heading);
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .market-card.ours .market-price-range { color: var(--gold); }
+
+    .market-freq {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+
+    .market-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .market-features li {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      padding-left: 22px;
+      position: relative;
+    }
+
+    .market-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--gold-dim);
+      font-size: 0.8rem;
+    }
+
+    .market-features li.negative::before {
+      content: '✕';
+      color: #8B4545;
+    }
+
+    .market-features li.negative { color: var(--text-dim); }
+
+    /* ============================================
+       SLIDE 9: TIMELINE
+       ============================================ */
+    .slide-timeline {
+      background: var(--black);
+    }
+
+    .timeline-visual {
+      margin-top: 56px;
+      position: relative;
+    }
+
+    .timeline-track {
+      display: flex;
+      gap: 0;
+      position: relative;
+    }
+
+    .timeline-track::before {
+      content: '';
+      position: absolute;
+      top: 32px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-dim));
+    }
+
+    .timeline-phase {
+      flex: 1;
+      position: relative;
+      padding-top: 60px;
+    }
+
+    .timeline-phase::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--dark);
+      border: 2px solid var(--gold);
+      z-index: 1;
+    }
+
+    .timeline-phase:first-child::before { background: var(--gold); }
+
+    .timeline-weeks {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gold-dim);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .timeline-phase-name {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .timeline-deliverables {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .timeline-deliverables li {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .timeline-deliverables li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--gold-dim);
+    }
+
+    .timeline-end {
+      text-align: center;
+      margin-top: 56px;
+      padding: 32px;
+      background: linear-gradient(135deg, rgba(197,164,103,0.06), transparent);
+      border: 1px solid var(--gold-border);
+      border-radius: 12px;
+    }
+
+    .timeline-end p {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+
+    .timeline-end p span { color: var(--gold); }
+
+    /* ============================================
+       SLIDE 10: WHAT YOU GET
+       ============================================ */
+    .slide-ownership {
+      background: var(--dark-warm);
+    }
+
+    .ownership-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .ownership-item {
+      padding: 28px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .ownership-item:hover {
+      border-color: var(--gold-border);
+      background: rgba(197,164,103,0.03);
+    }
+
+    .ownership-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gold-glow);
+      border: 1px solid var(--gold-border);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+    }
+
+    .ownership-item h4 {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .ownership-item p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* ============================================
+       SLIDE 11: MONTHLY COSTS
+       ============================================ */
+    .slide-costs {
+      background: var(--dark);
+    }
+
+    .costs-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-top: 48px;
+    }
+
+    .costs-table {
+      width: 100%;
+    }
+
+    .costs-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .costs-row:last-child {
+      border-bottom: none;
+      padding-top: 24px;
+      margin-top: 8px;
+      border-top: 1px solid var(--gold-border);
+    }
+
+    .costs-row .service {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .costs-row .service-name {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      font-weight: 400;
+    }
+
+    .costs-row .service-detail {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .costs-row .cost {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .costs-row:last-child .service-name {
+      font-weight: 500;
+      color: var(--gold);
+    }
+
+    .costs-row:last-child .cost {
+      color: var(--gold);
+      font-size: 1.1rem;
+    }
+
+    .costs-comparison {
+      background: var(--dark-surface);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 16px;
+      padding: 36px;
+    }
+
+    .costs-comparison h4 {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .comparison-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+    }
+
+    .comparison-item .comp-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .comparison-item .comp-value {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+
+    .comp-value.expensive { color: #C45C5C; }
+    .comp-value.savings { color: #6DB56D; }
+
+    .comparison-highlight {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(197,164,103,0.06);
+      border: 1px solid var(--gold-border);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .comparison-highlight p {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      font-style: italic;
+    }
+
+    .comparison-highlight p strong { color: var(--gold); }
+
+    /* ============================================
+       SLIDE 12: NEXT STEPS (CTA)
+       ============================================ */
+    .slide-cta {
+      background: var(--black);
+      text-align: center;
+    }
+
+    .slide-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(197,164,103,0.08) 0%, transparent 70%);
+    }
+
+    .cta-content {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .cta-title {
+      font-family: var(--font-heading);
+      font-weight: 300;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1.1;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .cta-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .cta-desc {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 48px;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out-expo);
+      text-decoration: none;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(197,164,103,0.25);
+      background: var(--gold-light);
+    }
+
+    .cta-button svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    .cta-button:hover svg { transform: translateX(4px); }
+
+    .cta-footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--gold-border);
+    }
+
+    .cta-contact {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+    }
+
+    .cta-contact-item {
+      text-align: center;
+    }
+
+    .cta-contact-item .contact-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .cta-contact-item .contact-value {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 900px) {
+      .slide { padding: 40px 24px; }
+      .nav-dots { display: none; }
+
+      .opportunity-grid,
+      .built-grid,
+      .investment-grid,
+      .costs-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .phases-grid,
+      .market-comparison,
+      .solution-branches {
+        grid-template-columns: 1fr;
+      }
+
+      .ownership-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .solution-bottom {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .roi-visual {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .roi-arrow { transform: rotate(90deg); }
+
+      .timeline-track { flex-direction: column; gap: 32px; }
+
+      .timeline-track::before {
+        top: 0;
+        bottom: 0;
+        left: 8px;
+        right: auto;
+        width: 2px;
+        height: auto;
+      }
+
+      .timeline-phase { padding-top: 0; padding-left: 40px; }
+
+      .timeline-phase::before {
+        top: 0;
+        left: 0;
+      }
+
+      .cover-meta { flex-direction: column; gap: 24px; }
+
+      .cta-contact { flex-direction: column; gap: 24px; }
+
+      .success-metrics { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .ownership-grid { grid-template-columns: 1fr; }
+      .solution-bottom { grid-template-columns: 1fr; }
+    }
+
+    /* ============================================
+       PRINT STYLES
+       ============================================ */
+    @media print {
+      html { scroll-snap-type: none; }
+      .slide { min-height: auto; page-break-after: always; padding: 40px; }
+      .nav-dots, .slide-counter, .noise-overlay { display: none; }
+      .reveal { opacity: 1; transform: none; }
+      body { background: white; color: #1a1a1a; }
+      .heading-display, .heading-section, .heading-sub,
+      .cover-title, .phase-title, .cta-title { color: #1a1a1a; }
+      .text-gold, .stat-value, .total-amount, .phase-price .amount,
+      .cover-title em, .cta-title em { color: #A08A55; }
+      .body-text, .text-dim, .text-muted { color: #444; }
+      .stat-card, .phase-card, .branch-card, .market-card,
+      .ownership-item, .browser-mockup, .costs-comparison {
+        border-color: #ddd;
+        background: #fafafa;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="noise-overlay"></div>
+
+  <!-- Navigation Dots -->
+  <nav class="nav-dots" id="navDots">
+    <button class="nav-dot active" data-slide="0" data-label="Cover"></button>
+    <button class="nav-dot" data-slide="1" data-label="Opportunity"></button>
+    <button class="nav-dot" data-slide="2" data-label="Track Record"></button>
+    <button class="nav-dot" data-slide="3" data-label="Solution"></button>
+    <button class="nav-dot" data-slide="4" data-label="Phases"></button>
+    <button class="nav-dot" data-slide="5" data-label="Investment"></button>
+    <button class="nav-dot" data-slide="6" data-label="ROI"></button>
+    <button class="nav-dot" data-slide="7" data-label="Market"></button>
+    <button class="nav-dot" data-slide="8" data-label="Timeline"></button>
+    <button class="nav-dot" data-slide="9" data-label="Ownership"></button>
+    <button class="nav-dot" data-slide="10" data-label="Costs"></button>
+    <button class="nav-dot" data-slide="11" data-label="Next Steps"></button>
+  </nav>
+
+  <!-- Slide Counter -->
+  <div class="slide-counter">
+    <span class="current">01</span> / 12
+  </div>
+
+  <!-- =========================================
+       SLIDE 1: COVER
+       ========================================= -->
+  <section class="slide slide-cover" data-slide-index="0">
+    <div class="slide-inner">
+      <div class="cover-badge reveal">
+        <span>Prepared Exclusively For</span>
+      </div>
+      <h1 class="cover-title reveal reveal-delay-1">
+        Your <em>Digital Platform</em>
+      </h1>
+      <p class="cover-subtitle reveal reveal-delay-2">
+        Turning your positioning strategy into a lead-generating platform<br>that works for you around the clock.
+      </p>
+      <div class="cover-meta reveal reveal-delay-3">
+        <div class="cover-meta-item">
+          <span class="value">Dayanne Costa</span>
+          <span class="key">Prepared For</span>
+        </div>
+        <div class="cover-meta-item">
+          <span class="value">Adrian Jenson</span>
+          <span class="key">Prepared By</span>
+        </div>
+        <div class="cover-meta-item">
+          <span class="value">February 2026</span>
+          <span class="key">Date</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 2: THE OPPORTUNITY
+       ========================================= -->
+  <section class="slide slide-opportunity" data-slide-index="1">
+    <div class="slide-inner">
+      <div class="opportunity-grid">
+        <div>
+          <span class="section-number reveal">01</span>
+          <h2 class="heading-section reveal reveal-delay-1">The Strategy Is Ready.<br><span class="text-gold">Now It Needs a Stage.</span></h2>
+          <div class="gold-line reveal reveal-delay-2"></div>
+          <p class="body-text reveal reveal-delay-2">
+            Your positioning is clear: you're not just another agent, you're a <strong>UHNW Access Point</strong> &mdash; a private entry point for capital-aware, discreet, eight-figure decision-makers.
+          </p>
+          <div class="quote-block reveal reveal-delay-3">
+            <p>"The strategy defines who you are. The platform puts you where they're looking."</p>
+          </div>
+          <p class="body-text reveal reveal-delay-4">
+            Without a digital platform built to match this positioning, the strategy stays on paper. This proposal turns it into a living, breathing lead-generation system.
+          </p>
+        </div>
+        <div class="opportunity-stats">
+          <div class="stat-card reveal reveal-delay-2">
+            <div class="stat-value">Online First</div>
+            <div class="stat-label">the majority of high-net-worth buyers research advisors online before making contact</div>
+          </div>
+          <div class="stat-card reveal reveal-delay-3">
+            <div class="stat-value">$8M+</div>
+            <div class="stat-label">your average deal size &mdash; one conversion justifies the entire platform</div>
+          </div>
+          <div class="stat-card reveal reveal-delay-4">
+            <div class="stat-value">24/7</div>
+            <div class="stat-label">a platform that qualifies leads while you focus on closing deals</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 3: WHAT WE'VE BUILT TOGETHER
+       ========================================= -->
+  <section class="slide slide-built" data-slide-index="2">
+    <div class="slide-inner">
+      <div class="built-grid">
+        <div>
+          <div class="browser-mockup reveal">
+            <div class="browser-bar">
+              <div class="browser-dot"></div>
+              <div class="browser-dot"></div>
+              <div class="browser-dot"></div>
+              <div class="browser-url">dayanne-website.web.app</div>
+            </div>
+            <div class="browser-content">
+              <div class="mockup-text">
+                <div class="site-name">Mandarin Oriental Residences</div>
+                <div class="site-desc">Grand Cayman &mdash; Landing Page</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <span class="section-number reveal">02</span>
+          <h2 class="heading-section reveal reveal-delay-1">We've Done<br>This <span class="text-gold">Before</span></h2>
+          <div class="gold-line reveal reveal-delay-2"></div>
+          <p class="body-text reveal reveal-delay-2">
+            Your Mandarin Oriental landing page exceeded expectations &mdash; bilingual, lead-capturing, and built to a luxury standard that matches the $8M+ properties you represent.
+          </p>
+          <p class="body-text reveal reveal-delay-3" style="margin-top: 16px;">
+            This is a brand-new platform for <strong>your personal brand.</strong> Same quality, same working relationship &mdash; now built to position you as the UHNW access point.
+          </p>
+          <div class="success-metrics reveal reveal-delay-4">
+            <div class="metric">
+              <div class="metric-name">Bilingual</div>
+              <div class="metric-desc">Full English &amp; Portuguese</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Lead Capture</div>
+              <div class="metric-desc">With source tracking &amp; admin</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Mobile-First</div>
+              <div class="metric-desc">Responsive luxury design</div>
+            </div>
+            <div class="metric">
+              <div class="metric-name">Fast Delivery</div>
+              <div class="metric-desc">On time &amp; on budget</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 4: THE SOLUTION
+       ========================================= -->
+  <section class="slide slide-solution" data-slide-index="3">
+    <div class="slide-inner" style="text-align: center;">
+      <span class="section-number reveal">03</span>
+      <h2 class="heading-section reveal reveal-delay-1">The Complete <span class="text-gold">UHNW Platform</span></h2>
+      <p class="body-text reveal reveal-delay-2" style="margin: 0 auto;">
+        A unified digital presence built around your positioning &mdash; master landing page, targeted funnels, intelligent lead capture, and a private CRM.
+      </p>
+
+      <div class="solution-diagram">
+        <div class="solution-hub reveal reveal-delay-3">
+          <h3>Master Landing Page</h3>
+          <p>"Private Access to Miami's Most Coveted Residences"</p>
+        </div>
+
+        <div class="solution-branches">
+          <div class="branch-card reveal reveal-delay-4">
+            <div class="branch-icon">&#127959;</div>
+            <h4>NYC &amp; US Relocations</h4>
+            <p>Executive relocation, lifestyle transition, NYC-to-Miami value proposition</p>
+          </div>
+          <div class="branch-card reveal reveal-delay-5">
+            <div class="branch-icon">&#127463;&#127479;</div>
+            <h4>Brazilian Buyers</h4>
+            <p>Native Portuguese, cultural alignment, international capital focus</p>
+          </div>
+          <div class="branch-card reveal reveal-delay-6">
+            <div class="branch-icon">&#127760;</div>
+            <h4>Global UHNW</h4>
+            <p>Discretion-first, cross-border handling, institution-level service</p>
+          </div>
+        </div>
+
+        <div class="solution-bottom">
+          <div class="solution-feature reveal reveal-delay-4">
+            <div class="feat-label">Lead Capture</div>
+            <div class="feat-value">Qualified Intake</div>
+          </div>
+          <div class="solution-feature reveal reveal-delay-5">
+            <div class="feat-label">Analytics</div>
+            <div class="feat-value">Full Tracking</div>
+          </div>
+          <div class="solution-feature reveal reveal-delay-5">
+            <div class="feat-label">CRM</div>
+            <div class="feat-value">Pipeline View</div>
+          </div>
+          <div class="solution-feature reveal reveal-delay-6">
+            <div class="feat-label">Automation</div>
+            <div class="feat-value">Email Sequences</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 5: PHASE BREAKDOWN
+       ========================================= -->
+  <section class="slide slide-phases" data-slide-index="4">
+    <div class="slide-inner">
+      <div style="text-align: center; margin-bottom: 8px;">
+        <span class="section-number reveal">04</span>
+        <h2 class="heading-section reveal reveal-delay-1">Built in Phases,<br><span class="text-gold">Delivered with Confidence</span></h2>
+        <p class="body-text reveal reveal-delay-2" style="margin: 0 auto;">Start with what matters most. Scale when you're ready.</p>
+      </div>
+
+      <div class="phases-grid">
+        <!-- Phase 1 -->
+        <div class="phase-card featured reveal reveal-delay-3">
+          <div class="phase-number">PHASE 01</div>
+          <div class="phase-title">Master Landing Page &amp; Lead Capture</div>
+          <div class="phase-timeline">3&ndash;4 weeks</div>
+          <ul class="phase-list">
+            <li>Full landing page per your brand positioning</li>
+            <li>Hero, pillars, specializations, process sections</li>
+            <li>"Request a Private Conversation" qualified intake</li>
+            <li>Bilingual (English &amp; Portuguese)</li>
+            <li>Optimized to rank on Google</li>
+            <li>Tracks where every lead comes from</li>
+            <li>Enhanced admin panel with lead management</li>
+            <li>Built for speed &amp; performance</li>
+          </ul>
+          <div class="phase-price">
+            <span class="amount">$2,500</span>
+          </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="phase-card reveal reveal-delay-4">
+          <div class="phase-number">PHASE 02</div>
+          <div class="phase-title">Segment Funnels &amp; CRM Upgrade</div>
+          <div class="phase-timeline">2&ndash;3 weeks</div>
+          <ul class="phase-list">
+            <li>3 dedicated funnel pages (NYC, Brazilian, Global)</li>
+            <li>Segment-specific messaging &amp; social proof</li>
+            <li>Lead pipeline view (Kanban board)</li>
+            <li>Lead engagement scoring</li>
+            <li>Funnel source attribution</li>
+            <li>Notes &amp; quick-action per lead</li>
+          </ul>
+          <div class="phase-price">
+            <span class="amount">$1,500</span>
+          </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="phase-card reveal reveal-delay-5">
+          <div class="phase-number">PHASE 03</div>
+          <div class="phase-title">Marketing Automation &amp; Growth</div>
+          <div class="phase-timeline">1&ndash;2 weeks</div>
+          <ul class="phase-list">
+            <li>Calendly integration (branded scheduling)</li>
+            <li>WhatsApp click-to-chat</li>
+            <li>Email automation (welcome + segment sequences)</li>
+            <li>Retargeting pixels (Meta + Google)</li>
+            <li>Structured data &amp; advanced SEO</li>
+            <li>Social sharing optimization</li>
+          </ul>
+          <div class="phase-price">
+            <span class="amount">$1,000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 6: INVESTMENT
+       ========================================= -->
+  <section class="slide slide-investment" data-slide-index="5">
+    <div class="slide-inner">
+      <div style="text-align: center;">
+        <span class="section-number reveal">05</span>
+        <h2 class="heading-section reveal reveal-delay-1">Your <span class="text-gold">Investment</span></h2>
+      </div>
+
+      <div class="investment-grid">
+        <div class="total-card reveal reveal-delay-2">
+          <span class="label">Complete UHNW Digital Platform</span>
+          <div class="total-amount">$5,000</div>
+          <div class="total-desc">
+            A one-time investment for a platform you own permanently. No monthly platform fees. No vendor lock-in.
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-3">
+          <div class="investment-breakdown">
+            <div class="breakdown-row">
+              <span class="breakdown-label">Phase 1 &mdash; Master LP + Lead Capture</span>
+              <span class="breakdown-value">$2,500</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label">Phase 2 &mdash; Segment Funnels + CRM</span>
+              <span class="breakdown-value">$1,500</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label">Phase 3 &mdash; Automation + Growth</span>
+              <span class="breakdown-value">$1,000</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-label">Total Platform Investment</span>
+              <span class="breakdown-value">$5,000</span>
+            </div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 24px; line-height: 1.6;">
+            Each phase delivers a complete, working product. Start with Phase 1 for $2,500 and see results within 3&ndash;4 weeks before committing further.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 7: ROI
+       ========================================= -->
+  <section class="slide slide-roi" data-slide-index="6">
+    <div class="slide-inner" style="text-align: center;">
+      <span class="section-number reveal">06</span>
+      <h2 class="heading-section reveal reveal-delay-1">The Math <span class="text-gold">Speaks for Itself</span></h2>
+      <div class="gold-line reveal reveal-delay-2" style="margin: 24px auto;"></div>
+
+      <div class="roi-visual">
+        <div class="roi-box cost reveal reveal-delay-3">
+          <div class="roi-num">$5,000</div>
+          <div class="roi-label">Platform Investment</div>
+        </div>
+        <div class="roi-arrow reveal reveal-delay-3">&rarr;</div>
+        <div class="roi-box return reveal reveal-delay-4">
+          <div class="roi-num">$200,000</div>
+          <div class="roi-label">One Deal Commission</div>
+        </div>
+      </div>
+
+      <div class="roi-equation reveal reveal-delay-5">
+        <p>Platform cost = <strong>2.5%</strong> of a single deal commission</p>
+      </div>
+
+      <p class="roi-note reveal reveal-delay-6">
+        One additional qualified lead who converts pays for this platform <strong style="color: var(--gold);">40 times over.</strong>
+        The platform runs 24/7, qualifying prospects while you focus on what you do best &mdash; closing deals and building relationships.
+      </p>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 8: MARKET CONTEXT
+       ========================================= -->
+  <section class="slide slide-market" data-slide-index="7">
+    <div class="slide-inner">
+      <div style="text-align: center; margin-bottom: 8px;">
+        <span class="section-number reveal">07</span>
+        <h2 class="heading-section reveal reveal-delay-1">How This <span class="text-gold">Compares</span></h2>
+        <p class="body-text reveal reveal-delay-2" style="margin: 0 auto;">The same scope. Dramatically different value.</p>
+      </div>
+
+      <div class="market-comparison">
+        <div class="market-card reveal reveal-delay-3">
+          <div class="market-type">SaaS Platform</div>
+          <div class="market-name">Luxury Presence</div>
+          <div class="market-price-range">$6K+</div>
+          <div class="market-freq">per year, ongoing (custom-quoted)</div>
+          <ul class="market-features">
+            <li>Template-based design</li>
+            <li>Basic lead capture</li>
+            <li>Limited customization</li>
+            <li class="negative">You never own the site</li>
+            <li class="negative">Locked into monthly fees</li>
+            <li class="negative">Generic luxury aesthetic</li>
+          </ul>
+        </div>
+
+        <div class="market-card ours reveal reveal-delay-4">
+          <div class="market-type">Your Proposal</div>
+          <div class="market-name">Custom UHNW Platform</div>
+          <div class="market-price-range">$5,000</div>
+          <div class="market-freq">one-time, you own it</div>
+          <ul class="market-features">
+            <li>100% custom to your brand</li>
+            <li>Qualified lead intake system</li>
+            <li>3 targeted segment funnels</li>
+            <li>Built-in CRM + analytics</li>
+            <li>Bilingual (EN/PT)</li>
+            <li>SEO optimized for Google</li>
+          </ul>
+        </div>
+
+        <div class="market-card reveal reveal-delay-5">
+          <div class="market-type">Boutique Agency</div>
+          <div class="market-name">Full-Service Build</div>
+          <div class="market-price-range">$15K&ndash;$40K</div>
+          <div class="market-freq">plus ongoing retainer</div>
+          <ul class="market-features">
+            <li>Full design + development</li>
+            <li>Strategy included</li>
+            <li>Ongoing maintenance</li>
+            <li class="negative">8&ndash;16 week timelines</li>
+            <li class="negative">Expensive change requests</li>
+            <li class="negative">Agency dependency</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 9: TIMELINE
+       ========================================= -->
+  <section class="slide slide-timeline" data-slide-index="8">
+    <div class="slide-inner">
+      <div style="text-align: center;">
+        <span class="section-number reveal">08</span>
+        <h2 class="heading-section reveal reveal-delay-1">Delivery <span class="text-gold">Timeline</span></h2>
+        <p class="body-text reveal reveal-delay-2" style="margin: 0 auto;">From kickoff to a fully operational platform in 6&ndash;9 weeks.</p>
+      </div>
+
+      <div class="timeline-visual">
+        <div class="timeline-track">
+          <div class="timeline-phase reveal reveal-delay-3">
+            <div class="timeline-weeks">WEEKS 1&ndash;4</div>
+            <div class="timeline-phase-name">Phase 1: Foundation</div>
+            <ul class="timeline-deliverables">
+              <li>Platform setup &amp; configuration</li>
+              <li>Master landing page build</li>
+              <li>Lead capture system</li>
+              <li>Bilingual implementation</li>
+              <li>Admin panel + analytics</li>
+              <li>QA + launch</li>
+            </ul>
+          </div>
+
+          <div class="timeline-phase reveal reveal-delay-4">
+            <div class="timeline-weeks">WEEKS 5&ndash;7</div>
+            <div class="timeline-phase-name">Phase 2: Funnels</div>
+            <ul class="timeline-deliverables">
+              <li>NYC relocations page</li>
+              <li>Brazilian buyers page</li>
+              <li>Global UHNW page</li>
+              <li>CRM pipeline view</li>
+              <li>Lead scoring</li>
+            </ul>
+          </div>
+
+          <div class="timeline-phase reveal reveal-delay-5">
+            <div class="timeline-weeks">WEEKS 7&ndash;9</div>
+            <div class="timeline-phase-name">Phase 3: Growth</div>
+            <ul class="timeline-deliverables">
+              <li>Calendly integration</li>
+              <li>WhatsApp setup</li>
+              <li>Email automation</li>
+              <li>Retargeting pixels</li>
+              <li>Advanced SEO</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-end reveal reveal-delay-6">
+          <p>Platform live and generating leads in as little as <span>4 weeks</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 10: WHAT YOU GET
+       ========================================= -->
+  <section class="slide slide-ownership" data-slide-index="9">
+    <div class="slide-inner">
+      <div style="text-align: center; margin-bottom: 8px;">
+        <span class="section-number reveal">09</span>
+        <h2 class="heading-section reveal reveal-delay-1">What You <span class="text-gold">Own</span></h2>
+        <p class="body-text reveal reveal-delay-2" style="margin: 0 auto;">Everything. No subscriptions, no vendor lock-in, no compromises.</p>
+      </div>
+
+      <div class="ownership-grid">
+        <div class="ownership-item reveal reveal-delay-3">
+          <div class="ownership-icon">&#9881;</div>
+          <h4>Complete Source Code</h4>
+          <p>Full ownership of all code, assets, and designs. Your platform, your rules.</p>
+        </div>
+        <div class="ownership-item reveal reveal-delay-3">
+          <div class="ownership-icon">&#127760;</div>
+          <h4>SEO-Optimized</h4>
+          <p>Built for Google discovery: "Miami luxury real estate advisor for Brazilian investors"</p>
+        </div>
+        <div class="ownership-item reveal reveal-delay-3">
+          <div class="ownership-icon">&#127463;&#127479;</div>
+          <h4>Bilingual Platform</h4>
+          <p>Full English &amp; Portuguese with automatic browser detection and easy toggle.</p>
+        </div>
+        <div class="ownership-item reveal reveal-delay-4">
+          <div class="ownership-icon">&#128202;</div>
+          <h4>Analytics &amp; Tracking</h4>
+          <p>See where every lead comes from, how they interact with your site, and what's converting.</p>
+        </div>
+        <div class="ownership-item reveal reveal-delay-4">
+          <div class="ownership-icon">&#128101;</div>
+          <h4>Built-In CRM</h4>
+          <p>Lead pipeline, engagement scoring, notes, status management, CSV export. No extra CRM fee.</p>
+        </div>
+        <div class="ownership-item reveal reveal-delay-4">
+          <div class="ownership-icon">&#128241;</div>
+          <h4>Mobile Perfected</h4>
+          <p>Responsive luxury design that feels as refined on a phone as it does on a desktop.</p>
+        </div>
+        <div class="ownership-item reveal reveal-delay-5">
+          <div class="ownership-icon">&#9889;</div>
+          <h4>Lightning Fast</h4>
+          <p>Sub-2-second load times that match the luxury expectation. No waiting, no lag.</p>
+        </div>
+        <div class="ownership-item reveal reveal-delay-5">
+          <div class="ownership-icon">&#128274;</div>
+          <h4>Secure &amp; Private</h4>
+          <p>Password-protected admin, consent-based lead capture, HTTPS everywhere.</p>
+        </div>
+        <div class="ownership-item reveal reveal-delay-5">
+          <div class="ownership-icon">&#128640;</div>
+          <h4>Growth Ready</h4>
+          <p>Email automation, retargeting pixels, WhatsApp integration &mdash; built to scale with you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 11: MONTHLY COSTS
+       ========================================= -->
+  <section class="slide slide-costs" data-slide-index="10">
+    <div class="slide-inner">
+      <div style="text-align: center;">
+        <span class="section-number reveal">10</span>
+        <h2 class="heading-section reveal reveal-delay-1">Ongoing <span class="text-gold">Costs</span></h2>
+        <p class="body-text reveal reveal-delay-2" style="margin: 0 auto;">Minimal monthly tools to keep your platform running.</p>
+      </div>
+
+      <div class="costs-layout">
+        <div class="costs-table reveal reveal-delay-3">
+          <div class="costs-row">
+            <div class="service">
+              <span class="service-name">Website Hosting &amp; Database</span>
+              <span class="service-detail">Hosting, lead storage &amp; admin access</span>
+            </div>
+            <span class="cost">~$1&ndash;5/mo</span>
+          </div>
+          <div class="costs-row">
+            <div class="service">
+              <span class="service-name">Calendly Standard</span>
+              <span class="service-detail">Branded scheduling</span>
+            </div>
+            <span class="cost">$12&ndash;15/mo</span>
+          </div>
+          <div class="costs-row">
+            <div class="service">
+              <span class="service-name">Email Automation</span>
+              <span class="service-detail">ActiveCampaign Starter (1,000 contacts)</span>
+            </div>
+            <span class="cost">$15/mo</span>
+          </div>
+          <div class="costs-row">
+            <div class="service">
+              <span class="service-name">Domain</span>
+              <span class="service-detail">dayannecosta.com or similar</span>
+            </div>
+            <span class="cost">~$15/yr</span>
+          </div>
+          <div class="costs-row">
+            <div class="service">
+              <span class="service-name">Estimated Monthly Total</span>
+            </div>
+            <span class="cost">~$29&ndash;$36/mo</span>
+          </div>
+        </div>
+
+        <div class="costs-comparison reveal reveal-delay-4">
+          <h4>Annual Cost Comparison</h4>
+          <div class="comparison-item">
+            <span class="comp-label">Luxury Presence (SaaS)</span>
+            <span class="comp-value expensive">$6,000+/yr</span>
+          </div>
+          <div class="comparison-item">
+            <span class="comp-label">Agency retainer</span>
+            <span class="comp-value expensive">$15,000&ndash;$40,000+</span>
+          </div>
+          <div class="comparison-item">
+            <span class="comp-label">Your platform (tools only)</span>
+            <span class="comp-value savings">$348&ndash;$432/yr</span>
+          </div>
+          <div class="comparison-highlight">
+            <p>Save <strong>thousands per year</strong> vs. renting a platform</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       SLIDE 12: NEXT STEPS
+       ========================================= -->
+  <section class="slide slide-cta" data-slide-index="11">
+    <div class="slide-inner">
+      <div class="cta-content">
+        <span class="section-number reveal">11</span>
+        <h2 class="cta-title reveal reveal-delay-1">
+          Let's Bring Your<br><em>Strategy to Life</em>
+        </h2>
+        <p class="cta-desc reveal reveal-delay-2">
+          Your positioning is ready. Your brand is defined. The only thing missing is the platform that puts you in front of the right people, at the right moment, with the right message.
+        </p>
+        <a href="mailto:jensonadrian@gmail.com?subject=UHNW%20Platform%20-%20Let's%20Start%20Phase%201" class="cta-button reveal reveal-delay-3">
+          Start with Phase 1
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="cta-footer reveal reveal-delay-4">
+        <div class="cta-contact">
+          <div class="cta-contact-item">
+            <div class="contact-label">Email</div>
+            <div class="contact-value">jensonadrian@gmail.com</div>
+          </div>
+          <div class="cta-contact-item">
+            <div class="contact-label">Portfolio</div>
+            <div class="contact-value">ajenson.com</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       JAVASCRIPT
+       ========================================= -->
+  <script>
+    // ---- Intersection Observer for reveals ----
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ---- Active slide tracking ----
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.nav-dot');
+    const counter = document.querySelector('.slide-counter .current');
+
+    const slideObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = parseInt(entry.target.dataset.slideIndex);
+          dots.forEach(d => d.classList.remove('active'));
+          dots[index]?.classList.add('active');
+          counter.textContent = String(index + 1).padStart(2, '0');
+        }
+      });
+    }, { threshold: 0.5 });
+
+    slides.forEach(slide => slideObserver.observe(slide));
+
+    // ---- Dot navigation ----
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const idx = parseInt(dot.dataset.slide);
+        slides[idx]?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // ---- Keyboard navigation ----
+    document.addEventListener('keydown', (e) => {
+      const current = [...slides].findIndex(s => {
+        const rect = s.getBoundingClientRect();
+        return rect.top >= -100 && rect.top < window.innerHeight / 2;
+      });
+
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        const next = Math.min(current + 1, slides.length - 1);
+        slides[next]?.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const prev = Math.max(current - 1, 0);
+        slides[prev]?.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  </script>
+
+</body>
+</html>

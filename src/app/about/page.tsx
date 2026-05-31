@@ -10,15 +10,26 @@ export const metadata: Metadata = {
     title: "About | Adrian Jenson",
     description:
       "Senior full-stack developer specializing in AI-powered SaaS products and web applications.",
-    url: "https://adrianjenson.com/about",
+    url: "https://ajenson.com/about",
   },
 };
 
 const experience = [
   {
+    role: "Senior Full Stack Developer",
+    company: "Anchorpoint Financial Limited",
+    period: "01/2026 — Present",
+    bullets: [
+      "Develop and maintain a multi-portal fintech platform for a tokenized money venture backed by Standard Chartered Hong Kong, HKT, and Animoca Brands under HKMA's Stablecoin Issuer Sandbox.",
+      "Build frontend features across multiple portals using Next.js (App Router), TypeScript, shadcn/ui, Radix UI, and Tailwind CSS.",
+      "Deliver full-stack implementations including NestJS backend services, transaction history, approval workflows, and developer documentation.",
+      "Collaborate cross-functionally with backend, QA, and DevOps engineers in an agile environment.",
+    ],
+  },
+  {
     role: "Senior Software Developer",
     company: "Bermwood Technologies",
-    period: "07/2025 — 11/2025",
+    period: "07/2025 — 05/2026",
     bullets: [
       "Built a modern real estate platform from the ground up serving property buyers and agents.",
       "Implemented interactive property maps using Google Maps API with custom overlays and clustering.",
@@ -128,9 +139,9 @@ const experience = [
 ];
 
 const skills = [
-  { category: "Frontend", items: ["React", "Next.js", "Angular", "TypeScript", "Tailwind CSS", "MUI"] },
-  { category: "Backend", items: ["Node.js", "Express.js", ".NET", "PostgreSQL", "MongoDB", "GraphQL"] },
-  { category: "AI & Cloud", items: ["OpenAI", "Replicate", "LangChain", "Firebase", "AWS", "Vercel"] },
+  { category: "Frontend", items: ["React", "Next.js", "Angular", "TypeScript", "Tailwind CSS", "shadcn/ui", "Radix UI", "MUI"] },
+  { category: "Backend", items: ["Node.js", "NestJS", "Express.js", ".NET", "PostgreSQL", "MongoDB", "GraphQL"] },
+  { category: "AI & Cloud", items: ["AI-Assisted Development", "OpenAI", "Replicate", "LangChain", "Firebase", "AWS", "Vercel"] },
   { category: "Mobile & Tools", items: ["Ionic", "React Native", "Git", "Docker", "Cypress", "Figma"] },
 ];
 
@@ -153,12 +164,13 @@ export default function AboutPage() {
               at scale.
             </p>
             <p>
-              My current focus is on AI-powered SaaS products. I&apos;m most energized when working
-              at the intersection of great product design and cutting-edge AI capabilities — whether
-              that&apos;s building RAG pipelines, integrating OpenAI into product workflows, or
-              shipping entire SaaS products end-to-end. Recent work includes{" "}
-              <span className="text-green-accent">Posteridy.ai</span>, a business credit intelligence
-              platform, and several RAG applications built during my time at Flowroom.
+              My current focus is on fintech platforms and AI-augmented development. I&apos;m
+              currently building a multi-portal tokenized money platform at{" "}
+              <span className="text-green-accent">Anchorpoint Financial Limited</span>, a joint
+              venture between Standard Chartered Hong Kong, HKT, and Animoca Brands. I leverage
+              AI-assisted development workflows daily to ship faster and with higher quality —
+              whether that&apos;s building RAG pipelines, integrating OpenAI into product workflows,
+              or shipping entire SaaS products end-to-end.
             </p>
             <p>
               I work best as an autonomous contributor who can own large features from architecture

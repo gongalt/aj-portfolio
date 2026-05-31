@@ -4,16 +4,27 @@ import FeaturedWork from "@/components/sections/FeaturedWork";
 import AboutPreview from "@/components/sections/AboutPreview";
 import TechStack from "@/components/sections/TechStack";
 import ContactCTA from "@/components/sections/ContactCTA";
+import FadeInSection from "@/components/ui/FadeInSection";
 
 export default function HomePage() {
   return (
     <main>
       <HeroSection />
-      <ServicesPreview />
-      <FeaturedWork />
-      <AboutPreview />
-      <TechStack />
-      <ContactCTA />
+      <FadeInSection id="services">
+        <ServicesPreview />
+      </FadeInSection>
+      <FadeInSection id="work">
+        <FeaturedWork />
+      </FadeInSection>
+      <FadeInSection id="about">
+        <AboutPreview />
+      </FadeInSection>
+      <FadeInSection>
+        <TechStack />
+      </FadeInSection>
+      <FadeInSection id="contact">
+        <ContactCTA />
+      </FadeInSection>
     </main>
   );
 }

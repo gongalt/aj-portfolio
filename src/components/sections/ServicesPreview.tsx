@@ -138,7 +138,9 @@ export default function ServicesPreview() {
                 bg-navy-light rounded-lg p-6
                 border border-navy-lighter
                 hover:border-green-accent
-                transition-colors duration-200
+                hover:-translate-y-1
+                hover:shadow-lg hover:shadow-navy/60
+                transition-all duration-200
               "
             >
               <div className="text-green-accent mb-4">{service.icon}</div>

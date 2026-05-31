@@ -12,6 +12,8 @@ const techCategories: TechCategory[] = [
       "React",
       "Vue.js",
       "TypeScript",
+      "shadcn/ui",
+      "Radix UI",
       "MUI",
       "Tailwind CSS",
     ],
@@ -20,6 +22,7 @@ const techCategories: TechCategory[] = [
     label: "Backend",
     items: [
       "Node.js",
+      "NestJS",
       "Express.js",
       ".NET",
       "PostgreSQL",
@@ -31,6 +34,7 @@ const techCategories: TechCategory[] = [
   {
     label: "AI & Cloud",
     items: [
+      "AI-Assisted Dev",
       "OpenAI",
       "Replicate",
       "RAG",
