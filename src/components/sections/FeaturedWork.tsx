@@ -41,6 +41,16 @@ const projects: Project[] = [
     imageAlt: "Malogica — HPC Cloud Platform",
     imageRight: false,
   },
+  {
+    overline: "Owned Product — Full Suite",
+    title: "Shazzy Milktea",
+    description:
+      "A complete software suite I built and run for my own milk tea shop in Cebu, Philippines — a customer loyalty PWA (QR stamps, vouchers, referrals), a staff operations dashboard for sales and inventory, time-tracking with payroll exports, and the public site with FoodPanda delivery. Firebase-backed, offline-capable PWAs.",
+    tech: ["Next.js 15", "React 19", "Firebase", "TypeScript", "PWA"],
+    externalUrl: "https://shazzymilktea.com",
+    imageAlt: "Shazzy Milktea — Milk Tea Shop Software Suite",
+    imageRight: true,
+  },
 ];
 
 function ExternalLinkIcon() {
