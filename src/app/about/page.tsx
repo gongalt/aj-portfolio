@@ -136,7 +136,7 @@ const experience = [
 const skills = [
   { category: "Frontend", items: ["React", "Next.js", "Angular", "TypeScript", "Tailwind CSS", "shadcn/ui", "Radix UI", "MUI"] },
   { category: "Backend", items: ["Node.js", "NestJS", "Express.js", ".NET", "PostgreSQL", "MongoDB", "GraphQL"] },
-  { category: "AI & Cloud", items: ["AI-Assisted Development", "OpenAI", "Replicate", "LangChain", "Firebase", "AWS", "Vercel"] },
+  { category: "AI & Cloud", items: ["AI-Assisted Development", "OpenAI", "Replicate", "Firebase", "AWS", "Vercel"] },
   { category: "Mobile & Tools", items: ["Ionic", "React Native", "Git", "Docker", "Cypress", "Figma"] },
 ];
 
