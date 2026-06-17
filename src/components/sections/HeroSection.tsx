@@ -4,6 +4,17 @@ export default function HeroSection() {
   return (
     <section className="min-h-screen flex items-center">
       <div className="max-w-5xl mx-auto px-6 pt-32 pb-24">
+        {/* Availability badge */}
+        <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-green-accent/40 bg-green-accent/10">
+          <span className="relative flex h-2 w-2" aria-hidden="true">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-accent opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-accent" />
+          </span>
+          <span className="font-mono text-green-accent text-xs tracking-wider">
+            Available now for new roles &amp; projects
+          </span>
+        </div>
+
         {/* Overline */}
         <p className="font-mono text-green-accent text-sm md:text-base mb-5 tracking-wider">
           Hi, my name is
@@ -22,8 +33,8 @@ export default function HeroSection() {
         {/* Bio */}
         <p className="max-w-xl text-slate text-lg leading-relaxed mb-12">
           I&apos;m a senior full-stack developer specializing in building
-          AI-powered SaaS products and exceptional web applications. Currently
-          available for freelance projects and product collaborations.
+          AI-powered SaaS products and exceptional web applications. Available
+          now for full-time roles, contracts, and product collaborations.
         </p>
 
         {/* CTA buttons */}

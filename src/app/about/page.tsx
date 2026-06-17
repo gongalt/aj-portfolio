@@ -18,18 +18,18 @@ const experience = [
   {
     role: "Senior Full Stack Developer",
     company: "Anchorpoint Financial Limited",
-    period: "01/2026 — Present",
+    period: "01/2026 — 06/2026",
     bullets: [
-      "Develop and maintain a multi-portal fintech platform for a tokenized money venture backed by Standard Chartered Hong Kong, HKT, and Animoca Brands under HKMA's Stablecoin Issuer Sandbox.",
-      "Build frontend features across multiple portals using Next.js (App Router), TypeScript, shadcn/ui, Radix UI, and Tailwind CSS.",
-      "Deliver full-stack implementations including NestJS backend services, transaction history, approval workflows, and developer documentation.",
-      "Collaborate cross-functionally with backend, QA, and DevOps engineers in an agile environment.",
+      "Developed and maintained a multi-portal fintech platform for a tokenized money venture backed by Standard Chartered Hong Kong, HKT, and Animoca Brands under HKMA's Stablecoin Issuer Sandbox.",
+      "Built frontend features across multiple portals using Next.js (App Router), TypeScript, shadcn/ui, Radix UI, and Tailwind CSS.",
+      "Delivered full-stack implementations including NestJS backend services, transaction history, approval workflows, and developer documentation.",
+      "Collaborated cross-functionally with backend, QA, and DevOps engineers in an agile environment.",
     ],
   },
   {
     role: "Senior Software Developer",
     company: "Bermwood Technologies",
-    period: "07/2025 — 05/2026",
+    period: "04/2026 — 06/2026",
     bullets: [
       "Built a modern real estate platform from the ground up serving property buyers and agents.",
       "Implemented interactive property maps using Google Maps API with custom overlays and clustering.",
@@ -164,19 +164,20 @@ export default function AboutPage() {
               at scale.
             </p>
             <p>
-              My current focus is on fintech platforms and AI-augmented development. I&apos;m
-              currently building a multi-portal tokenized money platform at{" "}
+              My focus is on fintech platforms and AI-augmented development. Most recently I
+              built a multi-portal tokenized money platform at{" "}
               <span className="text-green-accent">Anchorpoint Financial Limited</span>, a joint
               venture between Standard Chartered Hong Kong, HKT, and Animoca Brands. I leverage
-              AI-assisted development workflows daily to ship faster and with higher quality —
+              AI-assisted development workflows daily to ship faster and with higher quality,
               whether that&apos;s building RAG pipelines, integrating OpenAI into product workflows,
               or shipping entire SaaS products end-to-end.
             </p>
             <p>
               I work best as an autonomous contributor who can own large features from architecture
-              through deployment. I&apos;m currently open to freelance projects, short-term
-              contracts, and interesting product collaborations. If you have something to build,
-              I&apos;d love to hear about it.
+              through deployment. I&apos;m{" "}
+              <span className="text-green-accent">available immediately and actively looking</span>{" "}
+              — open to full-time roles, contracts, and product collaborations. If you have
+              something to build or a team to grow, I&apos;d love to hear about it.
             </p>
           </div>
 
