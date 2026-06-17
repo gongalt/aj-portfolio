@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 const experience = [
   {
     role: "Senior Full Stack Developer",
-    company: "Anchorpoint Financial Limited",
+    company: "Anchorpoint Financial Limited (Contract via Viseo)",
     period: "01/2026 — 06/2026",
     bullets: [
       "Developed and maintained a multi-portal fintech platform for a tokenized money venture backed by Standard Chartered Hong Kong, HKT, and Animoca Brands under HKMA's Stablecoin Issuer Sandbox.",
@@ -29,12 +29,13 @@ const experience = [
   {
     role: "Senior Software Developer",
     company: "Bermwood Technologies",
-    period: "04/2026 — 06/2026",
+    period: "06/2025 — 11/2025",
     bullets: [
       "Built a modern real estate platform from the ground up serving property buyers and agents.",
       "Implemented interactive property maps using Google Maps API with custom overlays and clustering.",
       "Architected frontend with Next.js and MUI, achieving sub-2s page loads on listing detail pages.",
       "Integrated Supabase for real-time listing updates and user authentication flows.",
+      "Returned on a short follow-on contract (Apr–Jun 2026) to extend the platform with additional features.",
     ],
   },
   {
